@@ -1,0 +1,368 @@
+{include file="inc/head.tpl"}
+<link href="user.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+  <div id="wrapper"> 
+    {include file="inc/header.tpl"}
+    <div class="wrap mb">
+      <div id="user"> 
+        <!--{if $rec eq 'login' || $rec eq 'register' || $rec eq 'password_reset'} 登录前 -->
+        <div class="passport"> 
+          <!--{if $rec eq 'register'} 会员注册 -->
+          <div class="register">
+            <h3>{$lang.user_register}<em>{$lang.user_register_cue_0}{$site.site_name}{$lang.user_register_cue_1} <a href="{$url.login}">{$lang.user_register_login}</a></em></h3>
+            <form id="register" action="{$url.register_post}" method="post">
+              <div class="tableDiv">
+                <dl>
+                  <dt>{$lang.user_email}：</dt>
+                  <dd>
+                    <input name="email" type="text" class="textInput" value="{$post.email}" size="36" />
+                    <i>*</i><p id="email" class="cue"></p></dd>
+                  </dl>
+                  <dl>
+                    <dt>{$lang.user_password}：</dt>
+                    <dd>
+                      <input name="password" type="password" class="textInput" size="36" />
+                      <i>*</i><p id="password" class="cue"></p></dd>
+                    </dl>
+                    <dl>
+                      <dt>{$lang.user_password_confirm}：</dt>
+                      <dd>
+                        <input name="password_confirm" type="password" class="textInput" size="36" />
+                        <i>*</i><p id="password_confirm" class="cue"></p></dd>
+                      </dl>
+                      <dl>
+                        <dt>&nbsp;</dt>
+                        <dd>
+                          <input type="hidden" name="token" value="{$token}" />
+                          <input type="button" class="btn" value="{$lang.user_register_btn}" onclick="douSubmit('register')" />
+                        </dd>
+                      </dl>
+                    </div>
+                  </form>
+                </div>
+                <!--{/if}--> 
+                <!--{if $rec eq 'login'} 会员登录 -->
+                <div class="login">
+                  <h3>{$lang.user_login}<em>{$lang.user_login_cue}</em></h3>
+                  <form action="{$url.login_post}" method="post">
+                    <div class="tableDiv">
+                      <dl>
+                        <input type="text" name="email" class="textInput" />
+                      </dl>
+                      <dl>
+                        <input type="password" name="password" class="textInput" />
+                      </dl>
+                      <dl>
+                        <input type="hidden" name="token" value="{$token}" />
+                        <input type="hidden" name="return_url" value="{$return_url}" />
+                        <input type="submit" name="submit" class="btn" value="{$lang.user_login_btn}" />
+                      </dl>
+                      <dl>
+                        <a href="{$url.password_reset}">{$lang.user_password_reset}？</a>
+                      </dl>
+                      <dl>
+                        <a href="{$url.register}" class="btnRegister">{$lang.user_register}</a>
+                      </dl>
+                    </div>
+                  </form>
+                </div>
+                <!--{/if}--> 
+                <!--{if $rec eq 'password_reset'} 重置密码 -->
+                <div class="login">
+                  <!--{if $action eq 'default'}-->
+                  <h3>{$lang.user_password_reset}<em>{$lang.user_password_reset_cue}</em></h3>
+                  <form action="{$url.password_reset_post}" method="post">
+                    <div class="tableDiv">
+                      <dl>
+                        <input type="text" name="email" class="textInput" />
+                      </dl>
+                      <!--{if $site.captcha}-->
+                      <dl>
+                        <input name="captcha" type="text" class="textArea captcha" size="10">
+                        <img id="vcode" src="{$site.root_url}captcha.php" alt="{$lang.captcha}" border="1" onClick="refreshimage()" title="{$lang.captcha_refresh}">
+                      </dl>
+                      <!--{/if}--> 
+                      <dl>
+                        <input type="hidden" name="token" value="{$token}" />
+                        <input type="submit" name="submit" class="btn" value="{$lang.user_password_reset_btn}" />
+                      </dl>
+                    </div>
+                  </form>
+                  <!--{elseif $action eq 'reset'}-->
+                  <h3>{$lang.user_password_reset_password}</h3>
+                  <form action="{$url.password_reset_post}" method="post">
+                    <div class="tableDiv">
+                      <dl>
+                        {$lang.user_password}<input type="password" name="password" class="textInput" />
+                      </dl>
+                      <dl>
+                        {$lang.user_password_confirm}<input type="password" name="password_confirm" class="textInput" />
+                      </dl>
+                      <dl>
+                        <input type="hidden" name="user_id" value="{$user_id}" />
+                        <input type="hidden" name="code" value="{$code}" />
+                        <input type="hidden" name="action" value="reset" />
+                        <input type="hidden" name="token" value="{$token}" />
+                        <input type="submit" name="submit" class="btn" value="{$lang.btn_submit}" />
+                      </dl>
+                    </div>
+                  </form>
+                  <!--{/if}-->
+                </div>
+                <!--{/if}--> 
+              </div>
+              <!--{else} 登录后 -->
+              <div class="userLeft"> {include file="inc/user_tree.tpl"} </div>
+              <div class="userIn"> {include file="inc/ur_here.tpl"}
+                <div class="main"> 
+                  <!--{if $rec eq 'default'} 会员中心 -->
+                  <div class="startPage">
+                    <dl class="welcom">
+                      <dt><b>{$user.user_name}</b>{$lang.user_welcom} {$site.site_name}！</dt>
+                      <dd>{$lang.user_last_login}：{$user_info.last_login}</dd>
+                      <dd>{$lang.user_last_ip}：{$user_info.last_ip}</dd>
+                      <dd>{$lang.user_login_count}：{$user_info.login_count}</dd>
+                    </dl>
+                    <h3><a href="{$url.order_list}" class="more">{$lang.user_order_list}</a>{$lang.order_my}</h3>
+                    <table width="100%" border="0" cellpadding="8" cellspacing="0" class="tableBasic">
+                      <!--{foreach from=$order_list item=order}-->
+                      <tr>
+                        <td width="250" class="imgList"><!--{foreach from=$order.product_list item=product}--> 
+                          <a href="{$product.url}" target="_blank"><img title="{$product.name}" src="{$product.thumb}" width="40" height="40" /></a> 
+                          <!--{/foreach}--></td>
+                          <td align="center">{$order.contact}</td>
+                          <td align="center">{$order.order_amount_format}</td>
+                          <td align="center">{$order.status_format}</td>
+                          <td align="center">{$order.add_time}</td>
+                          <td align="center">
+                            <a href="{$url.order}&order_sn={$order.order_sn}">{$lang.order_view_btn}</a>
+                            <!--{if $order.status eq '0'}--> | <a href="javascript:void(0)" onclick="douBox('{$url.order_cancel}&order_sn={$order.order_sn}')">{$lang.order_cancel}</a> | <a href="{$url.order}&order_sn={$order.order_sn}">{$lang.order_payment_btn}</a><!--{/if}-->
+                          </td>
+                        </tr>
+                        <!--{/foreach}-->
+                      </table>
+                    </div>
+                    <!--{/if}--> 
+                    <!--{if $rec eq 'edit'} 会员信息编辑 -->
+                    <h3>{$lang.user_edit}</h3>
+                    <form id="userEdit" action="{$url.edit_post}" method="post">
+                      <table width="100%" border="0" cellpadding="8" cellspacing="0" class="tableBasic">
+                        <tr>
+                          <th colspan="2">&nbsp;</th>
+                        </tr>
+                        <tr>
+                          <td width="70" align="right">{$lang.user_nickname}</td>
+                          <td>
+                            <input name="nickname" type="text" class="textInput" value="{$user_info.nickname}" size="55" />
+                            <i>*</i><p id="nickname" class="cue"></p>
+                          </td>
+                        </tr>
+                        <tr>
+                          <td align="right">{$lang.user_telephone}</td>
+                          <td>
+                            <input name="telephone" type="text" class="textInput" value="{$user_info.telephone}" size="55" />
+                            <i>*</i><p id="telephone" class="cue"></p>
+                          </td>
+                        </tr>
+                        <tr>
+                          <td align="right">{$lang.user_contact}</td>
+                          <td>
+                            <input name="contact" type="text" class="textInput" value="{$user_info.contact}" size="55" />
+                            <i>*</i><p id="contact" class="cue"></p>
+                          </td>
+                        </tr>
+                        <tr>
+                          <td align="right">{$lang.user_address}</td>
+                          <td>
+                            <input name="address" type="text" class="textInput" value="{$user_info.address}" size="80" />
+                            <i>*</i><p id="address" class="cue"></p>
+                          </td>
+                        </tr>
+                        <tr>
+                          <td align="right">{$lang.user_postcode}</td>
+                          <td>
+                            <input name="postcode" type="text" class="textInput" value="{$user_info.postcode}" size="55" />
+                            <i>*</i><p id="postcode" class="cue"></p>
+                          </td>
+                        </tr>
+                        <tr>
+                          <td align="right">{$lang.user_sex}</td>
+                          <td>
+                            <label for="sex_1">
+                              <input type="radio" name="sex" id="sex_1" value="1"{if $user_info.sex eq $lang.user_man} checked="true"{/if}>
+                              {$lang.user_man}
+                            </label>
+                            <label for="sex_0">
+                              <input type="radio" name="sex" id="sex_0" value="0"{if $user_info.sex eq $lang.user_woman} checked="true"{/if}>
+                              {$lang.user_woman}
+                            </label>
+                            {$wrong.sex}
+                          </td>
+                        </tr>
+                        <!--{if $user_info.defined}-->
+                        <tr>
+                          <td align="right">{$lang.user_defined}</td>
+                          <td>
+                            <textarea name="defined" id="defined" cols="58" class="textAreaAuto" style="height:{$user_info.defined_count}0px">{$user_info.defined}</textarea>
+                            <script type="text/javascript" src="images/jquery.autotextarea.js"></script>
+                            <script type="text/javascript">
+                              {literal}
+                              $("#defined").autoTextarea({maxHeight:300});
+                              {/literal}
+                            </script>
+                          </td>
+                        </tr>
+                        <!--{/if}-->
+                        <tr>
+                          <td></td>
+                          <td>
+                            <input type="hidden" name="token" value="{$token}" />
+                            <input type="button" class="btn" value="{$lang.btn_submit}" onclick="douSubmit('userEdit')"/>
+                          </td>
+                        </tr>
+                      </table>
+                    </form>
+                    <!--{/if}--> 
+                    <!--{if $rec eq 'password'} 密码修改 -->
+                    <h3>{$lang.user_password_edit}</h3>
+                    <form action="{$url.password_post}" method="post">
+                      <table width="100%" border="0" cellpadding="8" cellspacing="0" class="tableBasic">
+                        <tr>
+                          <th colspan="2">&nbsp;</th>
+                        </tr>
+                        <tr>
+                          <td width="80" align="right">{$lang.user_old_password}</td>
+                          <td>
+                            <input name="old_password" type="password" class="textInput" size="40" />
+                            <i>*</i>
+                          </td>
+                        </tr>
+                        <tr>
+                          <td align="right">{$lang.user_password}</td>
+                          <td>
+                            <input name="password" type="password" class="textInput" size="40" />
+                            <i>*</i>
+                          </td>
+                        </tr>
+                        <tr>
+                          <td align="right">{$lang.user_password_confirm}</td>
+                          <td>
+                            <input name="password_confirm" type="password" class="textInput" size="40" />
+                            <i>*</i>
+                          </td>
+                        </tr>
+                        <tr>
+                          <td></td>
+                          <td>
+                            <input type="hidden" name="token" value="{$token}" />
+                            <input type="submit" name="submit" class="btn" value="{$lang.btn_submit}" />
+                          </td>
+                        </tr>
+                      </table>
+                    </form>
+                    <!--{/if}--> 
+                    <!--{if $rec eq 'order_list'} 订单列表 -->
+                    <h3>{$lang.order_my}</h3>
+                    <div class="orderList">
+                      <table width="100%" border="0" cellpadding="8" cellspacing="0" class="tableBasic">
+                        <tr>
+                          <th width="250" align="left">{$lang.order_info}</th>
+                          <th align="center">{$lang.order_contact}</th>
+                          <th align="center">{$lang.order_order_amount}</th>
+                          <th align="center">{$lang.order_status}</th>
+                          <th align="center">{$lang.order_handler}</th>
+                        </tr>
+                        <!--{foreach from=$order_list item=order}-->
+                        <tr>
+                          <td colspan="5" class="orderSn"><em>{$order.add_time}</em>{$lang.order_sn}：<a href="{$url.order}&order_sn={$order.order_sn}">{$order.order_sn}</a></td>
+                        </tr>
+                        <tr>
+                          <td class="imgList">
+                            <!--{foreach from=$order.product_list item=product}--> 
+                            <a href="{$product.url}" target="_blank"><img title="{$product.name}" src="{$product.thumb}" width="40" height="40" /></a> 
+                            <!--{/foreach}-->
+                          </td>
+                          <td align="center">{$order.contact}</td>
+                          <td align="center">{$order.order_amount_format}</td>
+                          <td align="center">{$order.status_format}</td>
+                          <td align="center">
+                            <a href="{$url.order}&order_sn={$order.order_sn}">{$lang.order_view_btn}</a>
+                            <!--{if $order.status eq '0'}--> | <a href="javascript:void(0)" onclick="douBox('{$url.order_cancel}&order_sn={$order.order_sn}')">{$lang.order_cancel}</a><!--{if $order.if_payment}--> | <a href="{$url.order}&order_sn={$order.order_sn}">{$lang.order_payment_btn}</a><!--{/if}--><!--{/if}-->
+                          </td>
+                        </tr>
+                        <!--{/foreach}-->
+                      </table>
+                      {include file="inc/pager.tpl"} </div>
+                      <!--{/if}--> 
+                      <!--{if $rec eq 'order'} 订单详情 -->
+                      <h3>{$lang.order_view}</h3>
+                      <div class="order">
+                        <table width="100%" border="0" cellpadding="8" cellspacing="0" class="tableBasic">
+                          <tr>
+                            <th height="30" colspan="2" align="left">{$lang.order_sn}：{$order.order_sn}</th>
+                            <th colspan="2" align="left">{$lang.order_add_time}：{$order.add_time}</th>
+                            <th colspan="2" align="right">{$lang.order_status}：{$order.status_format}</th>
+                          </tr>
+                          <tr>
+                            <td width="60">{$lang.order_contact}：</td>
+                            <td>{$order.contact}</td>
+                            <td width="60">{$lang.order_telephone}：</td>
+                            <td>{$order.telephone}</td>
+                            <td width="60" align="right">{$lang.order_postcode}：</td>
+                            <td>{$order.postcode}</td>
+                          </tr>
+                          <tr>
+                            <td>{$lang.order_address}：</td>
+                            <td colspan="5">{$order.address}</td>
+                          </tr>
+                          <!--{if $order.if_payment}-->
+                          <tr>
+                            <td valign="top">{$lang.order_payment}：</td>
+                            <td colspan="5"><!--{if $order.payment && $order.status eq '0'}--><span class="payment">{$order.payment}</span><!--{/if}-->{$order.pay_name}</td>
+                          </tr>
+                          <!--{/if}-->
+                          <!--{if $order.shipping_id}-->
+                          <tr>
+                            <td>{$lang.order_shipping}：</td>
+                            <td>{$order.shipping_name}</td>
+                            <td>{$lang.order_tracking_no}：</td>
+                            <td colspan="3"><!--{if $order.tracking_no}-->{$order.tracking_no}<!--{else}-->{$lang.order_undelivered}<!--{/if}--></td>
+                          </tr>
+                          <!--{/if}-->
+                        </table>
+                        <table width="100%" border="0" cellpadding="8" cellspacing="0" class="tableBasic" style="margin:30px 0;">
+                          <tr>
+                            <td align="left"><strong>{$lang.order_name}</strong></td>
+                            <td width="150" align="center"><strong>{$lang.order_price}</strong></td>
+                            <td width="150" align="center"><strong>{$lang.number}</strong></td>
+                          </tr>
+                          <!--{foreach from=$order.product_list item=product}-->
+                          <tr>
+                            <td><a href="{$product.url}" target="_blank">{$product.name}</a></td>
+                            <td align="center">{$product.price}</td>
+                            <td align="center">x {$product.product_number}</td>
+                          </tr>
+                          <!--{/foreach}-->
+                          <tr>
+                            <td colspan="3" align="right" class="totalAmount">
+                              {$lang.order_product_amount}：{$order.product_amount_format}<br />
+                              <!--{if $order.shipping_id}-->
+                              {$lang.order_shipping_fee}：{$order.shipping_fee_format}<br />
+                              <!--{/if}-->
+                              {$lang.order_order_amount}：{$order.order_amount_format}</td>
+                            </tr>
+                          </table>
+                        </div>
+                        <!--{/if}--> 
+                      </div>
+                    </div>
+                    <!-- /userIn --> 
+                    <!--{/if}--> 
+                  </div>
+                </div>
+                {include file="inc/online_service.tpl"}
+                {include file="inc/footer.tpl"} 
+              </div>
+            </body>
+            </html>

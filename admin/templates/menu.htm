@@ -1,0 +1,55 @@
+<div id="menu">
+    <ul class="top">
+        <!-- 管理首页 -->
+        <li><a href="index.php"><i class="home"></i><em>{$lang.menu_home}<!--{if $unum.system}--><span class="unum"><span>{$unum.system}</span></span><!--{/if}--></em></a></li>
+    </ul>
+
+    <!-- 系统设置、自定义导航、首页幻灯、单页面管理 -->
+    <ul>
+        <li {if $cur eq 'system'}class="cur"{/if}><a href="system.php"><i class="system"></i><em>{$lang.system}</em></a></li>
+        <li {if $cur eq 'nav'}class="cur"{/if}><a href="nav.php"><i class="nav"></i><em>{$lang.nav}</em></a></li>
+        <li {if $cur eq 'show'}class="cur"{/if}><a href="show.php"><i class="show"></i><em>{$lang.show}</em></a></li>
+        <li {if $cur eq 'page'}class="cur"{/if}><a href="page.php"><i class="page"></i><em>{$lang.menu_page}</em></a></li>
+    </ul>
+
+    <!-- ？？？ -->
+    <!--{if !$workspace.menu_column && !$workspace.menu_single} 如果没有模块则调用单页面菜单 -->
+    <!--{foreach from=$workspace.menu_simple item=menu}-->
+    <ul>
+        <li {if $cur eq $menu.unique_id}class="cur"{/if}><a href="page.php?rec=edit&id={$menu.id}"><i></i><em>{$menu.page_name}</em></a></li>
+        <!--{foreach from=$menu.child item=child}-->
+        <li {if $cur eq $child.unique_id}class="cur"{/if}><a href="page.php?rec=edit&id={$child.id}"><i class="menuPage"></i><em>{$child.page_name}</em></a></li>
+        <!--{/foreach}-->
+    </ul>
+    <!--{/foreach}-->
+    <!--{/if}-->
+
+    <!-- 分类和列表 来自system.dou -->
+    <!--{foreach from=$workspace.menu_column item=menu}-->
+    <ul>
+        <li {if $cur eq $menu.name_category}class="cur"{/if}><a href="{$menu.name_category}.php"><i class="{$menu.name}Cat"></i><em>{$menu.lang_category}</em></a></li>
+        <li {if $cur eq $menu.name}class="cur"{/if}><a href="{$menu.name}.php"><i class="{$menu.name}"></i><em>{$menu.lang}</em></a></li>
+    </ul>
+    <!--{/foreach}-->
+
+    <!-- 单菜单 来自system.dou -->
+    <!--{if $workspace.menu_single}-->
+    <ul>
+        <!--{foreach from=$workspace.menu_single item=menu}-->
+        <li {if $cur eq $menu.name}class="cur"{/if}><a href="{$menu.name}.php"><i class="{$menu.name}"></i><em>{$menu.lang}<!--{if $menu.name eq 'plugin'}-->{if $unum.plugin}<span class="unum"><span>{$unum.plugin}</span></span>{/if}<!--{/if}--></em></a></li>
+        <!--{/foreach}-->
+    </ul>
+    <!--{/if}-->
+
+    <!-- 系统管理：数据备份、手机版、设置模板、网站管理员、操作记录 -->
+    <ul class="bot">
+        <li {if $cur eq 'backup'}class="cur"{/if}><a href="backup.php"><i class="backup"></i><em>{$lang.backup}</em></a></li>
+        <li {if $cur eq 'mobile'}class="cur"{/if}><!-- <li id="must_hide"></li> --><a href="mobile.php"><i class="mobile"></i><em>{$lang.mobile}</em></a></li>
+        <li {if $cur eq 'theme'}class="cur"{/if}><a href="theme.php"><i class="theme"></i><em>{$lang.theme}<!--{if $unum.theme}--><span class="unum"><span>{$unum.theme}</span></span><!--{/if}--></em></a></li>
+        <li {if $cur eq 'manager'}class="cur"{/if}><a href="manager.php"><i class="manager"></i><em>{$lang.manager}</em></a></li>
+
+        <li {if $cur eq 'rbac'}class="cur"{/if}><a href="rbac.php"><i class="manager"></i><em>权限管理</em></a></li>
+
+        <li {if $cur eq 'manager_log'}class="cur"{/if}><a href="manager.php?rec=manager_log"><i class="managerLog"></i><em>{$lang.manager_log}</em></a></li>
+    </ul>
+</div>

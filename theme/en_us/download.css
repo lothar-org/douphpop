@@ -1,0 +1,62 @@
+/* download_category
+----------------------------------------------- */
+#downloadList {
+ padding-top:20px;
+}
+#downloadList dl {
+ border-bottom: 1px dotted #DDD;
+ background: url(images/icon_red.gif) no-repeat 10px 6px;
+ padding:0 10px 10px 25px;
+ margin-bottom: 10px;
+ zoom:1;
+ overflow:hidden;
+}
+#downloadList dt {
+ float:left;
+}
+#downloadList dd {
+ float:right;
+ text-align:left;
+ color:#999;
+}
+/* download
+----------------------------------------------- */
+#download {
+ padding: 15px 0;
+}
+#download .img {
+ float: left;
+ width: 280px;
+ margin-right:20px;
+}
+#download .info {
+ float: left;
+ width: 465px;
+ line-height: 200%;
+}
+#download .info h1 {
+ font-size: 18px;
+ margin-bottom:10px;
+}
+#download .info ul li b {
+ font-weight:bold;
+}
+#download .btn {
+ margin-top:10px;
+}
+#download .content {
+ margin-top:40px;
+}
+#download .content h3 {
+ height: 35px;
+ line-height: 35px;
+ color: #7A7F81;
+ font-weight: bold;
+ font-size: 14px;
+ border-bottom: 1px solid #CBD1D3;
+}
+#download .content ul {
+ padding: 15px 0;
+ color: #666;
+ line-height: 200%;
+}

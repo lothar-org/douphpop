@@ -1,0 +1,39 @@
+  {include file="inc/head.tpl"}
+  <link href="gallery.css" type="text/css" rel="stylesheet" />
+  <script type="text/javascript" src="images/slide_show.js"></script>
+</head>
+<body>
+<div id="wrapper"> {include file="inc/header.tpl"}
+ <div class="wrap mb"> {include file="inc/ur_here.tpl"}
+  <div class="gallery">
+   <div class="galleryGallery">
+    <ul class="slides">
+     <!--{foreach from=$gallery.array item=row}-->
+     <li><a href="{$row.image}" target="_blank"><img src="{$row.image}" height="500" /></a></li>
+     <!--{/foreach}-->
+    </ul>
+    <div class="sileThumb"> 
+     <!--{foreach from=$gallery.array item=row}--> 
+     <a data-slide-index="{$row.number}" href=""><img src="{$row.image}" width="80" height="80" /></a> 
+     <!--{/foreach}--> 
+    </div>
+   </div>
+   <script type="text/javascript">
+    {literal}
+    $(document).ready(function(){
+     $('.slides').bxSlider({
+       pagerCustom: '.sileThumb',
+       auto: false,
+       controls: true
+     });
+    })
+    {/literal}
+    </script> 
+  </div>
+  {include file="inc/pager.tpl"}
+  <div class="clear"></div>
+ </div>
+ {include file="inc/online_service.tpl"}
+ {include file="inc/footer.tpl"} </div>
+</body>
+</html>

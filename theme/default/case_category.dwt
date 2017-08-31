@@ -1,0 +1,27 @@
+  {include file="inc/head.tpl"}
+  <link href="case.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+  <div id="wrapper"> 
+    {include file="inc/header.tpl"}
+    <div class="wrap mb">
+      <div id="pageLeft"> {include file="inc/case_tree.tpl"} </div>
+      <div id="pageIn"> 
+        {include file="inc/ur_here.tpl"}
+        <div id="caseList"> 
+          <!--{foreach from=$case_list name=case_list name=case item=case}--> 
+          <dl<!--{if $smarty.foreach.case.iteration % 4 eq 0}--> class="last"<!--{/if}-->>
+          <dd><a href="{$case.url}"><img src="{$case.image}" width="175" height="175"></a></dd>
+          <dt><a href="{$case.url}">{$case.title}</a></dt>
+        </dl>
+        <!--{/foreach}--> 
+      </div>
+      {include file="inc/pager.tpl"} 
+    </div>
+    <div class="clear"></div>
+  </div>
+  {include file="inc/online_service.tpl"}
+  {include file="inc/footer.tpl"} 
+</div>
+</body>
+</html>

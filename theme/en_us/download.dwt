@@ -1,0 +1,44 @@
+  {include file="inc/head.tpl"}
+  <link href="download.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+  <div id="wrapper"> 
+    {include file="inc/header.tpl"}
+    <div class="wrap mb">
+      <div id="pageLeft"> {include file="inc/download_tree.tpl"} </div>
+      <div id="pageIn"> 
+        {include file="inc/ur_here.tpl"}
+        <div id="download">
+          <!--{if $download.image}-->
+          <div class="img">
+            <a href="{$download.image}" target="_blank"><img src="{$download.image}" width="280" /></a>
+          </div>
+          <!--{/if}-->
+          <div class="info">
+            <h1>{$download.title}</h1>
+            <ul>
+              <li><b>{$lang.add_time}：</b>{$download.add_time}</li>
+              <li><b>{$lang.click}：</b>{$download.click}</li>
+              <li><b>{$lang.download_size}：</b>{$download.size}</li>
+              <!--{foreach from=$defined name=defined item=v}-->
+              <li><b>{$v.arr}：</b>{$v.value}</li>
+              <!--{/foreach}-->
+            </ul>
+            <a href="{$download.download_link}" class="btn" target="_blank">{$lang.download_link}</a>
+          </div>
+          <div class="clear"></div>
+          <div class="content">
+            <h3>{$lang.download_content}</h3>
+            <ul>
+              {$download.content}
+            </ul>
+          </div>
+        </div>
+      </div>
+      <div class="clear"></div>
+    </div>
+    {include file="inc/online_service.tpl"}
+    {include file="inc/footer.tpl"} 
+  </div>
+</body>
+</html>

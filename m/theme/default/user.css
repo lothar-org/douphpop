@@ -1,0 +1,121 @@
+/* 会员中心
+----------------------------------------------- */
+#user .welcom {
+ line-height:200%;
+ padding:10px;
+ background-color:#FFF;
+ margin-bottom:10px;
+ font-size:13px;
+}
+#user .userTree li {
+ margin-bottom:1px;
+}
+#user .userTree li a {
+ display:block;
+ background:#FFFFFF url(images/icon_arrow_right.png) no-repeat right center;
+ padding:10px 10px;
+ font-size:14px;
+}
+#user .password dt {
+ float: left;
+ width: 110px;
+}
+#user .password dd {
+ margin-left: 110px;
+}
+#user .password .textInput {
+ width: 93%;
+}
+/* itemList */
+#user .itemList {
+ background-color:#FFF;
+}
+#user .itemList dl {
+ zoom:1;
+ overflow:hidden;
+ background-color:#F8F8F8;
+ padding:10px 10px;
+ margin-bottom:3px;
+}
+#user .itemList dl dt {
+ width:60px;
+ float:left;
+ margin-right:10px;
+ line-height:38px;
+}
+#user .itemList dl dd {
+ margin-left:70px;
+}
+#user .itemList dl dd p {
+ float:left;
+ width:60%;
+ font-weight:bold;
+}
+#user .itemList dl dd span {
+ float:right;
+ text-align:right;
+ color:#888;
+}
+/* item */
+#user .orderList .item {
+ margin-top:5px;
+ background-color:#FFF;
+}
+#user .orderList .item h3 {
+ padding:0 10px;
+ height:38px;
+ line-height:38px;
+}
+#user .orderList .item h3 span {
+ float:right;
+}
+#user .orderList .item ul.amount {
+ padding:0 10px;
+ text-align:right;
+ height:38px;
+ line-height:38px;
+}
+#user .orderList .item ul.amount em {
+ color:#999;
+}
+#user .orderList .item ul.btnList {
+ padding:10px;
+ height:28px;
+ border-top: solid #EEE 1px;
+ text-align:right;
+}
+/* order */
+#user .order .tableBasic {
+ margin-bottom:8px;
+}
+#user .order .totalAmount {
+ font-size: 13px;
+ padding: 5px 10px;
+ background-color: #FFF;
+ margin-bottom:10px;
+}
+#user .order .totalAmount dl {
+ zoom:1;
+ overflow:hidden;
+ padding:3px 0;
+}
+#user .order .totalAmount dt {
+ float:left;
+ color:#999;
+}
+#user .order .totalAmount dd {
+ float:right;
+}
+#user .order .totalAmount .payment {
+ border-top: solid #EEE 1px;
+ margin-top:10px;
+ padding:10px 0;
+ text-align:right;
+}
+#user .order .itemList h3 {
+ padding: 8px 10px;
+ background-color: #FFF;
+}
+#user .order .info {
+ color:#999;
+}

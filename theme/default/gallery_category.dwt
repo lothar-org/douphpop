@@ -1,0 +1,27 @@
+  {include file="inc/head_base.tpl"}
+  <link href="style.css" type="text/css" rel="stylesheet" />
+  <link href="gallery.css" type="text/css" rel="stylesheet" />
+</head>
+<body>
+  <div id="wrapper"> 
+    {include file="inc/header.tpl"}
+    <div class="wrap mb">
+      <div id="pageLeft"> {include file="inc/gallery_tree.tpl"} </div>
+      <div id="pageIn"> 
+        {include file="inc/ur_here.tpl"}
+        <div class="galleryList mb"> 
+          <!--{foreach from=$gallery_list name=gallery_list item=gallery}-->
+          <dl{if $smarty.foreach.gallery_list.iteration % 4 eq 0} class="last"{/if}>
+          <dd><a href="{$gallery.url}" target="_blank" title="{$gallery.title}"><img src="{$gallery.image}" alt="{$gallery.title}" width="180" /></a></dd>
+          <dt><a href="{$gallery.url}" target="_blank" title="{$gallery.title}">{$gallery.title}</a></dt>
+        </dl>
+        <!--{/foreach}--> 
+      </div>
+      {include file="inc/pager.tpl"} </div>
+      <div class="clear"></div>
+    </div>
+    {include file="inc/online_service.tpl"}
+    {include file="inc/footer.tpl"} 
+  </div>
+</body>
+</html>

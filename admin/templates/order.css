@@ -1,0 +1,36 @@
+/* 订单
+----------------------------------------------- */
+#order .tracking .trackingNo {
+ float:left;
+ width:50%;
+ font-size:14px;
+ color:#333;
+}
+#order .tracking .trackingSubmit {
+ float:right;
+ width:50%;
+ text-align:right;
+}
+#order .btnShow {
+ background: #FFFFFF url(../images/icon_edit_blue.png) no-repeat;
+ border: none;
+ width:16px;
+ height:16px;
+ text-indent:-999px;
+ overflow:hidden;
+ cursor:pointer;
+ margin-left:10px;
+}
+#order .btnHide {
+ background: #FFFFFF url(../images/icon_no.png) no-repeat;
+ border: none;
+ width:14px;
+ height:14px;
+ text-indent:-999px;
+ overflow:hidden;
+ cursor:pointer;
+ margin-top:5px;
+}
+#order .trackingSubmit .edit {
+ display:none;
+}

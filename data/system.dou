@@ -1,0 +1,3 @@
+// DOUPHP INSTALLED
+column_module:product,article,video,gallery,download,case
+single_module:guestbook,link,plugin,order,user

@@ -1,0 +1,73 @@
+/*
+Module Name: ajaxupload.dou
+Version: 1.0
+Author: Lothar Co.,Ltd.
+Author URI: http://www.wowlothar.cn/
+*/
+
+.ajaxupload {
+ zoom:1;
+ overflow:hidden;
+}
+.ajaxupload .input {
+ float:left;
+ background-color: #FFF;
+ border: 1px solid #DBDBDB;
+ padding: 5px;
+ height:20px;
+ width: 630px;
+ position: relative;
+}
+.ajaxupload .input input {
+ border: 0;
+ background-color: #FFF;
+ width: 100%;
+ color: #999;
+ height: 20px;
+ line-height: 20px;
+ -webkit-appearance: none;
+}
+.ajaxupload .input .progressBar {
+ display:none;
+ width: 640px;
+ position: absolute;
+ top:0;
+ left:0;
+}
+.ajaxupload .input .progressBar .progress {
+ position: relative;
+}
+.ajaxupload .input .progressBar .progress .bar {
+ background-color:#15A230;
+ width: 0%;
+ height: 30px;
+ line-height:30px;
+ text-align:right;
+}
+.ajaxupload .input .progressBar .progress .bar .percent {
+ color: #fff;
+ margin-right:20px;
+}
+.ajaxupload .btnUpload {
+ position: relative;
+ display:block;
+ float:left;
+ width:140px;
+ height: 30px;
+ line-height: 30px;
+ text-align:center;
+ cursor: pointer;
+ color: #555;
+ background: #EEE;
+ border: 1px solid #DDD;
+ overflow: hidden;
+}
+.ajaxupload .btnUpload input {
+ position: absolute;
+ font-size: 100px;
+ right: 0;
+ top: 0;
+ opacity: 0;
+ filter: alpha(opacity=0);
+ cursor: pointer
+}

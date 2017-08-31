@@ -1,0 +1,56 @@
+/* case_category
+----------------------------------------------- */
+#caseList {
+ padding-top:20px;
+ zoom:1;
+ overflow:hidden;
+}
+#caseList dl {
+ float:left;
+ width:175px;
+ margin:0 26px 26px 0;
+}
+#caseList dl.last {
+ margin-right:0;
+}
+#caseList dt {
+ background-color:#DDD;
+ padding:3px 10px;
+ text-align:center;
+}
+/* case
+----------------------------------------------- */
+#case {
+ padding: 20px 0;
+}
+#case h1 {
+ color: #333333;
+ font-size: 18px;
+ font-weight: bold;
+ text-align:center;
+}
+#case h2 {
+ border-bottom: 1px solid #DDD;
+ color:#19B4EA;
+ font-size:16px;
+ padding-bottom:10px;
+ margin-bottom:10px;
+}
+#case .info {
+ padding: 2px 0 20px 0;
+ color: #999999;
+ font-size: 13px;
+ text-align:center;
+}
+#case .desc {
+ margin-bottom:20px;
+ font-size:13px;
+ line-height:180%;
+}
+#case .desc b {
+ font-weight:bold;
+}
+#case .content {
+ color: #666666;
+ line-height: 180%;
+}

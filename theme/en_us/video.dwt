@@ -1,0 +1,41 @@
+{include file="inc/head.tpl"}
+<link href="video.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+  <div id="wrapper"> 
+    {include file="inc/header.tpl"}
+    <div class="wrap mb">
+      <div id="pageLeft"> {include file="inc/video_tree.tpl"} </div>
+      <div id="pageIn"> 
+        {include file="inc/ur_here.tpl"}
+        <div id="video">
+          <h1>{$video.title}</h1>
+          <div class="info">{$lang.add_time}：{$video.add_time} {$lang.click}：{$video.click} 
+            <!--{if $defined}--> 
+            <!--{foreach from=$defined name=defined item=v}--> {$v.arr}：{$v.value}<!--{/foreach}--> 
+            <!--{/if}--> 
+          </div>
+          <div class="video">
+            <!--{if $video.format eq '.swf'}-->
+            <embed src="{$video.file}" allowFullScreen="true" quality="high" width="780" height="479" align="middle" hidden="no" allowScriptAccess="always" type="application/x-shockwave-flash"></embed>
+            <!--{else}-->
+            <video src="{$video.file}" width="780" controls preload></video>
+            <!--{/if}-->
+          </div>
+          <h2>{$lang.video_content}</h2>
+          <div class="content"> 
+            {$video.content}
+          </div>
+          <div class="lift"> 
+            {if $lift.previous}<span>{$lang.video_previous}：<a href="{$lift.previous.url}">{$lift.previous.title}</a></span>{/if}
+            {if $lift.next}<span>{$lang.video_next}：<a href="{$lift.next.url}">{$lift.next.title}</a></span>{/if} 
+          </div>
+        </div>
+      </div>
+      <div class="clear"></div>
+    </div>
+    {include file="inc/online_service.tpl"}
+    {include file="inc/footer.tpl"} 
+  </div>
+</body>
+</html>

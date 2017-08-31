@@ -1,0 +1,172 @@
+  {include file="inc/head.tpl"}
+  <link href="order.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+  <div id="wrapper"> 
+    {include file="inc/header.tpl"}
+    <div class="wrap mb">
+      <div id="order"> 
+        <!--{if $rec eq 'cart'} 购物车列表 -->
+        <div class="cart">
+          <h3>{$lang.order_cart}</h3>
+          <!--{if $cart}-->
+          <div class="cartBox">
+            <dl class="head">
+              <dt><b>{$lang.order_product}</b></dt>
+              <dd class="name">&nbsp;</dd>
+              <dd class="price"><b>{$lang.price}</b></dd>
+              <dd class="number"><b>{$lang.number}</b></dd>
+              <dd class="subtotal"><b>{$lang.order_subtotal}</b></dd>
+              <dd class="handler"><b>{$lang.handler}</b></dd>
+            </dl>
+            <!--{foreach from=$cart.list name=cart item=product}-->
+            <dl>
+              <dt><a href="{$product.url}"><img src="{$product.thumb}" width="50" height="50" /></a></dt>
+              <dd class="name"><a href="{$product.url}">{$product.name}</a></dd>
+              <dd>{$product.price}</dd>
+              <dd class="number">
+                <span class="minus" onclick="changeNumber({$product.id} ,'minus' ,'{$site.root_url}')"> - </span><input type="text" name="number[{$product.id}]" id="number_{$product.id}" value="{$product.number}" onblur="changePrice({$product.id}, this.value, '{$site.root_url}')"/><span class="plus" onclick="changeNumber({$product.id} ,'add' ,'{$site.root_url}')">+</span>
+              </dd>
+              <dd id="subtotal_{$product.id}">{$product.subtotal}</dd>
+              <dd><a href="{$url.del}&id={$product.id}">{$lang.del}</a></dd>
+            </dl>
+            <!--{/foreach}-->
+            <ul class="cartAction">
+              <a href="{$site.root_url}" class="btnGray">{$lang.order_continue}</a>
+            </ul>
+          </div>
+          <div class="cartBtn">
+            <ul><em class="totalAmount"><b id="total">{$cart.total}</b>{$lang.order_cart_number}，{$lang.order_product_amount}：<b id="product_amount">{$cart.product_amount_format}</b></em><a href="{$url.checkout}">{$lang.order_checkout} <i>></i></a></li>
+            </div>
+            <!--{else}-->
+            <div class="cartEmpty">{$lang.order_cart_empty}</div>
+            <!--{/if}--> 
+          </div>
+          <!--{/if}--> 
+          <!--{if $rec eq 'checkout'} 结算页面 -->
+          <div class="checkout">
+            <h3>{$lang.order_checkout_title}</h3>
+            <div class="checkBox">
+              <form id="checkout" action="{$url.success}" method="post">
+                <div class="box">
+                  <h2>{$lang.order_consignee}</h2>
+                  <div class="tableDiv">
+                    <dl>
+                      <dt>{$lang.order_contact}：</dt>
+                      <dd>
+                        <input name="contact" type="text" class="textInput" value="{$order.contact}" size="55" />
+                        <p id="contact" class="cue"></p>
+                      </dd>
+                    </dl>
+                    <dl>
+                      <dt>{$lang.order_address}：</dt>
+                      <dd>
+                        <input name="address" type="text" class="textInput" value="{$order.address}" size="80" />
+                        <p id="address" class="cue"></p>
+                      </dd>
+                    </dl>
+                    <dl>
+                      <dt>{$lang.order_telephone}：</dt>
+                      <dd>
+                        <input name="telephone" type="text" class="textInput" value="{$order.telephone}" size="55" />
+                        <p id="telephone" class="cue"></p>
+                      </dd>
+                    </dl>
+                    <dl>
+                      <dt>{$lang.order_postcode}：</dt>
+                      <dd>
+                        <input name="postcode" type="text" class="textInput" value="{$order.postcode}" size="55" />
+                        <p id="postcode" class="cue"></p>
+                      </dd>
+                    </dl>
+                    <dl>
+                      <dt>&nbsp;</dt>
+                      <dd>
+                        <label class="checkbox">
+                          <input name="update_user_information" type="checkbox" value="update" /> {$lang.order_update_user_information}
+                        </label>
+                      </dd>
+                    </dl>
+                  </div>
+                </div>
+                <!--{if $shipping_list}-->
+                <div class="box">
+                  <h2>{$lang.order_shipping}</h2>
+                  <div class="shipping">
+                    <!--{foreach from=$shipping_list name=shipping item=shipping}-->
+                    <dl>
+                      <dt><label for="{$shipping.unique_id}"><input type="radio" name="shipping_id" id="{$shipping.unique_id}" value="{$shipping.unique_id}" {if !$order.shipping_id && $smarty.foreach.shipping.first}checked="true"{/if} onclick="changeShipping('{$shipping.unique_id}', '{$site.root_url}')"> {$shipping.name}</label></dt>
+                      <dd>{$shipping.description}</dd>
+                      <dd>{$lang.order_shipping_fee}:<b class="price">{$shipping.fee_format}</b> <!--{if $shipping.free}-->（{$shipping.free_format}）<!--{/if}--></dd>
+                    </dl>
+                    <!--{/foreach}-->
+                  </div>
+                </div>
+                <!--{/if}-->
+                <!--{if $payment_list}-->
+                <div class="box">
+                  <h2>{$lang.order_payment}</h2>
+                  <dl class="payment">
+                    <!--{foreach from=$payment_list name=payment item=payment}-->
+                    <dd>
+                      <input type="radio" name="pay_id" id="{$payment.id}" value="{$payment.id}"{if $smarty.foreach.payment.first} checked="true"{/if}>
+                      <label for="{$payment.id}"> <img src="{$payment.image}" width="133" height="39"> </label>
+                    </dd>
+                    <!--{/foreach}-->
+                  </dl>
+                </div>
+                <!--{/if}-->
+                <h2><a href="{$url.cart}" class="more">{$lang.order_cart_back}</a>{$lang.order_product_list}</h2>
+                <div class="cartBox">
+                  <dl class="head">
+                    <dt><b>{$lang.order_product}</b></dt>
+                    <dd class="name">&nbsp;</dd>
+                    <dd><b>{$lang.price}</b></dd>
+                    <dd><b>{$lang.number}</b></dd>
+                    <dd><b>{$lang.order_subtotal}</b></dd>
+                  </dl>
+                  <!--{foreach from=$cart.list name=cart item=product}-->
+                  <dl>
+                    <dt><a href="{$product.url}"><img src="{$product.thumb}" width="50" height="50" /></a></dt>
+                    <dd class="name"><a href="{$product.url}">{$product.name}</a></dd>
+                    <dd>{$product.price}</dd>
+                    <dd>x {$product.number}</dd>
+                    <dd>{$product.subtotal}</dd>
+                  </dl>
+                  <!--{/foreach}--> 
+                </div>
+                <div class="totalAmount">
+                  <div class="list">
+                    <dl><dt><b>{$cart.total}</b>{$lang.order_cart_number}，{$lang.order_product_amount}：</dt><dd>{$cart.product_amount_format}</dd></dl>
+                    <!--{if $shipping_list}-->
+                    <dl><dt>{$lang.order_shipping_fee}：</dt><dd id="shipping_fee">{$order.shipping_fee_format}</dd></dl>
+                    <!--{/if}--> 
+                    <dl><dt>{$lang.order_order_amount}：</dt><dd class="order_amount">{$order.order_amount_format}</dd></dl>
+                  </div>
+                </div>
+                <div class="orderSubmit">
+                  <input type="hidden" name="token" value="{$token}" />
+                  <span class="orderAmount">{$lang.order_order_amount}：<b class="order_amount">{$order.order_amount_format}</b></span>
+                  <input type="button" class="submit" value="{$lang.order_submit}" onclick="douSubmit('checkout')"/>
+                </div>
+              </form>
+            </div>
+          </div>
+          <!--{/if}--> 
+          <!--{if $rec eq 'success'} 订单提交成功 -->
+          <div class="complete">
+            <p class="title">{$lang.order_success_title}</p>
+            <p class="info">{$lang.order_sn}：<b><a href="{$url.order}&order_sn={$order.order_sn}">{$order.order_sn}</a></b>，{$lang.order_order_amount}：<b>{$order.order_amount_format}</b></p>
+            <p>{$lang.order_success_cue}</p>
+            <!--{if $payment}-->
+            <p>{$payment}</p>
+            <!--{/if}-->
+          </div>
+          <!--{/if}--> 
+        </div>
+      </div>
+      {include file="inc/online_service.tpl"}
+      {include file="inc/footer.tpl"} 
+    </div>
+  </body>
+  </html>

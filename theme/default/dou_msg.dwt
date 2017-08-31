@@ -1,0 +1,27 @@
+    {include file="inc/head.tpl"}
+    <!--{if $url}-->
+    <meta http-equiv="refresh" content="{$time}; URL={$url}" />
+    <!--{/if}-->
+    <!--{if !$url}-->
+    <script type="text/javascript">
+        {literal}
+        function go() {
+            window.history.go(-1);
+        }
+        {/literal}
+        setTimeout("go()", {$time}*1000);
+    </script>
+    <!--{/if}-->
+</head>
+<body>
+    <div id="wrapper"> {include file="inc/header.tpl"}
+       <div id="douMsg" class="wrap">
+          <dl>
+             <dt>{$text}</dt>
+             <dd>{$cue}<a href="{if $url}{$url}{else}javascript:history.go(-1);{/if}">{$lang.dou_msg_back}</a></dd>
+         </dl>
+     </div>
+     {include file="inc/online_service.tpl"}
+     {include file="inc/footer.tpl"} </div>
+ </body>
+ </html>

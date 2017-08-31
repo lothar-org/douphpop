@@ -1,0 +1,62 @@
+/* 留言板
+----------------------------------------------- */
+#guestBook {
+ padding: 10px 0;
+}
+#guestBook h2 {
+ color: #0072C6;
+ font-size: 16px;
+ font-weight: bold;
+ padding: 0 0 10px 10px;
+ border-bottom: solid #EEE 1px;
+}
+/* bookList */
+#guestBook .bookList {
+ padding: 10px;
+ line-height: 180%;
+ font-size: 13px;
+ margin-bottom: 20px;
+}
+#guestBook .bookList dl {
+ margin-bottom: 15px;
+}
+#guestBook .bookList dt {
+ color: #333;
+ margin-bottom: 3px;
+ font-weight: bold;
+}
+#guestBook .bookList dd {
+ color: #999;
+}
+#guestBook .bookList p {
+ color: #0072C6;
+ margin-top: 5px;
+ overflow: hidden;
+ zoom: 1;
+}
+#guestBook .bookList p em {
+ float: left;
+ width: 70px;
+}
+#guestBook .bookList p span {
+ float: left;
+ width: 800px;
+}
+#guestBook .bookList p b {
+ color: #999;
+ float: right;
+}
+#guestBook .bookList .pager {
+ text-align: left;
+ padding: 0;
+}
+#guestBook .contact dt {
+ float: left;
+ width: 110px;
+}
+#guestBook .contact dd {
+ margin-left: 110px;
+}
+#guestBook .contact .textInput {
+ width: 93%;
+}

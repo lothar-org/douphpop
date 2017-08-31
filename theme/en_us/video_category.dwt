@@ -1,0 +1,27 @@
+{include file="inc/head.tpl"}
+<link href="video.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+  <div id="wrapper">
+    {include file="inc/header.tpl"}
+    <div class="wrap mb">
+      <div id="pageLeft"> {include file="inc/video_tree.tpl"} </div>
+      <div id="pageIn">
+        {include file="inc/ur_here.tpl"}
+        <div id="videoList"> 
+          <!--{foreach from=$video_list name=video item=video}--> 
+          <dl<!--{if $smarty.foreach.video.iteration % 3 eq 0}--> class="last"<!--{/if}-->>
+          <dd><a href="{$video.url}"><img src="{$video.image}" width="242" height="134"></a></dd>
+          <dt><a href="{$video.url}">{$video.title}</a></dt>
+        </dl>
+        <!--{/foreach}--> 
+      </div>
+      {include file="inc/pager.tpl"}
+    </div>
+    <div class="clear"></div>
+  </div>
+  {include file="inc/online_service.tpl"}
+  {include file="inc/footer.tpl"}
+</div>
+</body>
+</html>

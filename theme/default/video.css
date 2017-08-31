@@ -1,0 +1,48 @@
+/* video_category
+----------------------------------------------- */
+#videoList {
+ padding-top:20px;
+ zoom:1;
+ overflow:hidden;
+}
+#videoList dl {
+ float:left;
+ width:242px;
+ margin:0 27px 27px 0;
+}
+#videoList dl.last {
+ margin-right:0;
+}
+#videoList dt {
+ background-color:#DDD;
+ padding:3px 10px;
+ text-align:center;
+}
+/* video
+----------------------------------------------- */
+#video {
+ padding: 20px 0;
+}
+#video h1 {
+ color: #333333;
+ font-size: 18px;
+ font-weight: bold;
+ text-align:center;
+}
+#video h2 {
+ border-bottom: 1px solid #DDD;
+ color:#19B4EA;
+ font-size:16px;
+ padding-bottom:10px;
+ margin-bottom:10px;
+}
+#video .info {
+ padding: 2px 0 20px 0;
+ color: #999999;
+ font-size: 13px;
+ text-align:center;
+}
+#video .content {
+ color: #666666;
+ line-height: 180%;
+}

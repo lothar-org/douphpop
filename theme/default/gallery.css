@@ -1,0 +1,98 @@
+/* gallery_list
+----------------------------------------------- */
+.galleryList {
+ zoom:1;
+ overflow:hidden;
+}
+.galleryList dl {
+ float:left;
+ width:180px;
+ margin:20px 20px 0 0;
+}
+.galleryList dl.last {
+ margin-right:0;
+}
+.galleryList dl dt {
+ margin-top:5px;
+}
+/* gallery
+----------------------------------------------- */
+.galleryGallery {
+ position: relative;
+ margin-top:20px;
+ padding: 0;
+ *zoom: 1;
+}
+.galleryGallery .slides a {
+ display: block;
+ height: 500px;
+ text-align:center;
+ padding:10px;
+}
+.galleryGallery .slideBox {
+ background: #fff;
+ /*fix other elements on the page moving (on Chrome)*/
+ -webkit-transform: translatez(0);
+ -moz-transform: translatez(0);
+ -ms-transform: translatez(0);
+ -o-transform: translatez(0);
+ transform: translatez(0);
+}
+/* -- slideLoading -- */
+.galleryGallery .slideLoading {
+ min-height: 50px;
+ background: url(images/slide_loader.gif) center center no-repeat #fff;
+ height: 100%;
+ width: 100%;
+ position: absolute;
+ top: 0;
+ left: 0;
+ z-index: 60;
+}
+/* -- previous 和 next 按钮 -- */
+.galleryGallery .arrowBox a {
+ z-index: 70;
+ font-family: \5b8b\4f53, sans-serif;
+ position: absolute;
+ display: block;
+ margin-bottom: -20px;
+ width: 40px;
+ height: 40px;
+ top: 230px;
+ line-height: 40px;
+ text-decoration: none;
+ text-align: center;
+ color: #fff;
+ font-size: 2em;
+ background-color: #333;
+ background-color: rgba(50, 50, 50, .3);
+}
+.galleryGallery .arrowBox a.disabled {
+ display: none;
+}
+.galleryGallery .arrowBox .arrowPrev {
+ left: 20px;
+}
+.galleryGallery .arrowBox .arrowNext {
+ right: 20px;
+}
+.galleryGallery .arrowBox a:hover {
+ background-color: rgba(50, 50, 50, .6);
+}
+/* -- sileThumb -- */
+.galleryGallery .sileThumb {
+ text-align: center;
+ margin-top:10px;
+ background-color:#EEE;
+}
+.galleryGallery .sileThumb a {
+ margin: 0 3px;
+}
+.galleryGallery .sileThumb a img {
+ border-left: 2px solid #EEE;
+ border-right: 2px solid #EEE;
+}
+.galleryGallery .sileThumb a.active img {
+ border-left: 2px solid #FFF;
+ border-right: 2px solid #FFF;
+}

@@ -1,0 +1,21 @@
+    {include file="inc/head.tpl"}
+</head>
+<body>
+    <div id="wrapper">
+        {include file="inc/header.tpl"}
+        <div class="wrap mb">
+            <div id="pageLeft"> {include file="inc/page_tree.tpl"} </div>
+            <div id="pageIn">
+                {include file="inc/ur_here.tpl"}
+                <div id="page">
+                    <h1>{$page.page_name}</h1>
+                    <div class="content"> {$page.content} </div>
+                </div>
+            </div>
+            <div class="clear"></div>
+        </div>
+        {include file="inc/online_service.tpl"}
+        {include file="inc/footer.tpl"}
+    </div>
+</body>
+</html>

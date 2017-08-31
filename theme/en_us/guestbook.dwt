@@ -1,0 +1,81 @@
+  {include file="inc/head.tpl"}
+  <link href="guestbook.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+  <div id="wrapper"> 
+    {include file="inc/header.tpl"}
+    <div class="wrap mb"> 
+      {include file="inc/ur_here.tpl"}
+      <div id="guestBook"> 
+        <!--{if $guestbook}-->
+        <h2>{$lang.guestbook}</h2>
+        <div class="bookList"> 
+          <!--{foreach from=$guestbook item=v}-->
+          <dl>
+            <dt>{$lang.guestbook_title}：{$v.title} <b>{$v.add_time}</b></dt>
+            <dd><em>{$lang.guestbook_content}：</em><span>{$v.content}</span></dd>
+            <!--{if $v.reply}-->
+            <p><em>{$lang.guestbook_reply}：</em><span>{$v.reply}</span><b>{$v.reply_time}</b></p>
+            <!--{/if}-->
+          </dl>
+          <!--{/foreach}--> 
+          {include file="inc/pager.tpl"} </div>
+          <!--{/if}-->
+          <h2>{$lang.guestbook_add}</h2>
+          <div class="bookAdd">
+            <form id="bookAdd" action="{$insert_url}" method="post">
+              <dl>
+                <dt>{$lang.guestbook_title}：</dt>
+                <dd>
+                  <input type="text" name="title" size="80" class="textInput" />
+                  <p id="title" class="cue"></p>
+                </dd>
+              </dl>
+              <dl>
+                <dt>{$lang.guestbook_name}：</dt>
+                <dd>
+                  <input type="text" name="name" size="55" class="textInput" />
+                  <p id="name" class="cue"></p>
+                </dd>
+              </dl>
+              <dl>
+                <dt>{$lang.guestbook_contact_type}：</dt>
+                <dd>
+                  <select name="contact_type" class="select">
+                    <option value="">{$lang.select}</option>
+                    {$option}
+                  </select>
+                  <input type="text" name="contact" size="60" class="textInput" />
+                  <p id="contact" class="cue"></p>
+                </dd>
+              </dl>
+              <dl>
+                <dt>{$lang.guestbook_content}：</dt>
+                <dd>
+                  <textarea name="content" cols="90" rows="5" class="textArea" /></textarea>
+                  <p id="content" class="cue"></p>
+                </dd>
+              </dl>
+              <!--{if $site.captcha}-->
+              <dl>
+                <dt>{$lang.captcha}：</dt>
+                <dd>
+                  <input type="text" name="captcha" class="textArea captcha" size="10">
+                  <img id="vcode" src="{$site.root_url}captcha.php" alt="{$lang.captcha}" border="1" onClick="refreshimage()" title="{$lang.captcha_refresh}">
+                  <p id="captcha" class="cue"></p>
+                </dd>
+              </dl>
+              <!--{/if}-->
+              <input type="hidden" name="token" value="{$token}" />
+              <dl class="submit">
+                <input type="button" class="btn" value="{$lang.btn_submit}" onclick="douSubmit('bookAdd')"/>
+              </dl>
+            </form>
+          </div>
+        </div>
+        <div class="clear"></div>
+      </div>
+      {include file="inc/footer.tpl"} 
+    </div>
+  </body>
+  </html>

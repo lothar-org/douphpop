@@ -1,0 +1,72 @@
+/* case_category
+----------------------------------------------- */
+.caseList {
+ font-size: 13px;
+ zoom: 1;
+ overflow: hidden;
+ background-color:#FFF;
+}
+.caseList dl {
+ float: left;
+ width: 50%;
+}
+.caseList dd {
+ text-align: center;
+ border-right: solid #EEEEEE 1px;
+ border-top: solid #EEEEEE 1px;
+ padding: 10px;
+}
+.caseList dd.clearBorder {
+ border-right: none;
+}
+.caseList dd .img {
+ margin-bottom: 10px;
+}
+.caseList dd .name {
+ margin-bottom: 6px;
+}
+.caseList dd .price {
+ color: #999999;
+}
+/* case
+----------------------------------------------- */
+#case {
+ padding: 20px 0;
+ background-color:#FFF;
+}
+#case h1 {
+ color: #333333;
+ font-size: 18px;
+ font-weight: bold;
+ text-align:center;
+}
+#case h2 {
+ border-bottom: 1px solid #EEE;
+ color:#777;
+ font-size:14px;
+ margin-bottom:10px;
+ padding:0 10px 10px 10px;
+}
+#case .info {
+ padding: 2px 10px 20px 10px;
+ color: #999999;
+ font-size: 13px;
+ text-align:center;
+}
+#case .desc {
+ margin-bottom:20px;
+ font-size:13px;
+ line-height:180%;
+ padding:0 10px;
+}
+#case .desc b {
+ font-weight:bold;
+}
+#case .content {
+ color: #666666;
+ line-height: 180%;
+ padding:0 10px;
+}
+#case .content img {
+ max-width:100%;
+}
