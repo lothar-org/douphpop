@@ -194,7 +194,7 @@ class Upload {
      * $field 上传的图片域
      * +----------------------------------------------------------
      */
-    function create_file_name($module, $id = '', $field = '')
+    function create_file_name($module, $id='', $field='image')
     {
         if ($field && $id)
             $file_name = $GLOBALS['dou']->get_file_name($GLOBALS['dou']->get_one("SELECT $field FROM " . $GLOBALS['dou']->table($module) . " WHERE id = '$id'"));

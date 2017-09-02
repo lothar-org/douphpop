@@ -102,28 +102,16 @@ class Order {
      */
     function get_order_product($order_id) {
         /* 获取产品列表 */
-        $query = $GLOBALS['dou']->query("SELECT product_id, name, price, product_number, defined FROM " . $GLOBALS['dou']->table('order_product') . " WHERE order_id = '$order_id' ORDER BY id DESC");
-    
-        while ($row = $GLOBALS['dou']->fetch_array($query)) {
+        $query = $GLOBALS['dou']->query("SELECT a.product_id,a.name,a.price,a.product_number,a.defined,b.image FROM " . $GLOBALS['dou']->table('order_product') . " as a LEFT JOIN ". $GLOBALS['dou']->table('product') ." ON a.product_id=b.id WHERE a.order_id='$order_id' ORDER BY a.id DESC");
+        while ($row = $GLOBALS['dou']->fetch_assoc($query)) {
             // 格式化价格
-            $price = $GLOBALS['dou']->price_format($row['price']);
-            $image = $GLOBALS['dou']->get_one("SELECT image FROM " . $GLOBALS['dou']->table('product') . " WHERE id = '$row[product_id]'");
-            $image = explode(".", $image);
-            $thumb = ROOT_URL . $image[0] . "_thumb." . $image[1];
-            $url = $GLOBALS['dou']->rewrite_url('product', $row['product_id']);
+            $row['price'] = $GLOBALS['dou']->price_format($row['price']);
+            $image = explode(".", $row['image']);
+            $row['thumb'] = ROOT_URL . $image[0] . "_thumb." . $image[1];
+            $row['url'] = $GLOBALS['dou']->rewrite_url('product', $row['product_id']);
             
-            $product_list[] = array(
-                    "product_id" => $row['product_id'],
-                    "name" => $row['name'],
-                    "thumb" => $thumb,
-                    "url" => $url,
-                    "product_number" => $row['product_number'],
-                    "name" => $row['name'],
-                    "price" => $price,
-                    "defined" => $defined
-            );
+            $product_list[] = $row;
         }
-        
         return $product_list;
     }
     

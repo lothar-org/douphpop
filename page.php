@@ -1,7 +1,7 @@
 <?php
 define('IN_LOTHAR', true);
-
 require (dirname(__FILE__) . '/include/init.php');
+require ROOT_PATH .'public.php';
 
 // 验证并获取合法的ID，如果不合法将其设定为-1
 $id = $firewall->get_legal_id('page', $_REQUEST['id'], $_REQUEST['unique_id']);

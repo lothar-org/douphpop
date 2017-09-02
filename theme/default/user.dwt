@@ -143,7 +143,10 @@
                         <!--{/foreach}-->
                       </table>
                     </div>
-                    <!--{/if}--> 
+                    <!--{/if}-->
+
+
+
                     <!--{if $rec eq 'edit'} 会员信息编辑 -->
                     <h3>{$lang.user_edit}</h3>
                     <form id="userEdit" action="{$url.edit_post}" method="post">
@@ -261,7 +264,10 @@
                         </tr>
                       </table>
                     </form>
-                    <!--{/if}--> 
+                    <!--{/if}-->
+
+
+
                     <!--{if $rec eq 'order_list'} 订单列表 -->
                     <h3>{$lang.order_my}</h3>
                     <div class="orderList">
@@ -355,6 +361,9 @@
                           </table>
                         </div>
                         <!--{/if}--> 
+
+
+
                       </div>
                     </div>
                     <!-- /userIn --> 

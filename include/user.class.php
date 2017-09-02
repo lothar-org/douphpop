@@ -1,19 +1,5 @@
 <?php
-/**
- * WincomtechPHP
- * --------------------------------------------------------------------------------------------------
- * 版权所有 2013-2035 XXX网络科技有限公司，并保留所有权利。
- * 网站地址: http://www.wowlothar.cn
- * --------------------------------------------------------------------------------------------------
- * 这不是一个自由软件！您只能在遵守授权协议前提下对程序代码进行修改和使用；不允许对程序代码以任何形式任何目的的再发布。
- * 授权协议：http://www.wowlothar.cn/license.html
- * --------------------------------------------------------------------------------------------------
- * Author: Lothar
- * Release Date: 2015-10-16
- */
-if (!defined('IN_LOTHAR')) {
-    die('Hacking attempt');
-}
+if (!defined('IN_LOTHAR')) die('Hacking attempt');
 
 class DouUser {
     /**
@@ -43,11 +29,9 @@ class DouUser {
      */
     function user_state($user_id, $shell) {
         $query = $GLOBALS['dou']->select($GLOBALS['dou']->table('user'), '*', '`user_id` = \'' . $user_id . '\'');
-        $user = $GLOBALS['dou']->fetch_array($query);
-        
+        $user = $GLOBALS['dou']->fetch_assoc($query);
         // 如果$user则开始比对$shell值
         $check_shell = is_array($user) ? $shell == md5($user['email'] . $user['password'] . DOU_SHELL) : FALSE;
-        
         // 如果比对$shell吻合，则返回会员信息，否则返回空
         return $check_shell ? $user : false;
     }
@@ -78,48 +62,33 @@ class DouUser {
      */
     function get_user_info($user_id) {
         $query = $GLOBALS['dou']->select($GLOBALS['dou']->table('user'), '*', '`user_id` = \'' . $user_id . '\'');
-        $data = $GLOBALS['dou']->fetch_array($query);
-        
-        $sex = $data['sex'] ? $GLOBALS['_LANG']['user_man'] : $GLOBALS['_LANG']['user_woman'];
-        $add_time = date("Y-m-d", $data['add_time']);
-        $last_login = date("Y-m-d", $data['last_login']);
-        
-        $user_info = array(
-                "email" => $data['email'],
-                "nickname" => $data['nickname'],
-                "telephone" => $data['telephone'],
-                "contact" => $data['contact'],
-                "address" => $data['address'],
-                "postcode" => $data['postcode'],
-                "sex" => $sex,
-                "truename" => $data['truename'],
-                "defined" => $data['defined'],
-                "add_time" => $add_time,
-                "login_count" => $data['login_count'],
-                "last_login" => $data['last_login'],
-                "last_ip" => $data['last_ip']
-        );
-        
-        return $user_info;
+        $uinfo = $GLOBALS['dou']->fetch_array($query,MYSQL_ASSOC);
+        $uinfo['username'] = $uinfo['nickname']?$uinfo['nickname'] : ($uinfo['email']?$uinfo['email']:($uinfo['telephone']?$uinfo['telephone']:''));
+        $uinfo['avatar'] = $uinfo['avatar'] ? ROOT_URL . $uinfo['avatar'] : '';
+        $uinfo['sex'] = $uinfo['sex'] ? $GLOBALS['_LANG']['user_man'] : $GLOBALS['_LANG']['user_woman'];
+        $uinfo['add_time'] = date("Y-m-d", $uinfo['add_time']);
+        $uinfo['last_login'] = date("Y-m-d", $uinfo['last_login']);
+        // $uinfo['last_login'] = date("Y-m-d H:i:s", $GLOBALS['dou']->get_first_log($uinfo['last_login']));
+        // $uinfo['last_ip'] = $GLOBALS['dou']->get_first_log($uinfo['last_ip']);
+        return $uinfo;
     }
     
     /**
      * +----------------------------------------------------------
      * 初始化会员功能全局变量
      * +----------------------------------------------------------
-     */
+    */
     function global_user_info() {
         // 如果验证码会员已经登录则读取会员信息
-        $user_row = $this->user_check($_SESSION[DOU_ID]['user_id'], $_SESSION[DOU_ID]['shell']);
-        if (is_array($user_row)) {
-            $user_name = $user_row['nickname'] ? $user_row['nickname'] : $user_row['email'];
+        $user_c = $this->user_check($_SESSION[DOU_ID]['user_id'], $_SESSION[DOU_ID]['shell']);
+        if (is_array($user_c)) {
+            $user_name = $user_c['nickname'] ? $user_c['nickname'] : ($user_c['email']?$user_c['email']:$user_c['telephone']);
             $user = array(
-                    'user_id' => $user_row['user_id'],
-                    'user_name' => $user_name
+                'user_id' => $user_c['user_id'],
+                'user_name' => $user_name
             );
         }
         $GLOBALS['smarty']->assign('if_user', true);
-        
         return $user;
     }
 
@@ -145,27 +114,15 @@ class DouUser {
      * +----------------------------------------------------------
      */
     function get_order_list($user_id, $num = 10) {
-        $query = $GLOBALS['dou']->query("SELECT * FROM " . $GLOBALS['dou']->table('order') . "WHERE user_id = '$user_id' ORDER BY order_id DESC LIMIT " . $num);
+        $query = $GLOBALS['dou']->query("SELECT order_id,order_sn,telephone,contact,order_amount,status,add_time FROM " . $GLOBALS['dou']->table('order') . "WHERE user_id = '$user_id' ORDER BY order_id DESC LIMIT " . $num);
         while ($row = $GLOBALS['dou']->fetch_array($query)) {
-            $add_time = date("Y-m-d h:i:s", $row['add_time']);
-            $status_format = $GLOBALS['_LANG']['order_status_' . $row['status']];
-            $order_amount_format = $GLOBALS['dou']->price_format($row['order_amount']);
-            $product_list = $GLOBALS['dou_order']->get_order_product($row['order_id']);
+            $row['add_time'] = date("Y-m-d h:i:s", $row['add_time']);
+            $row['status_format'] = $GLOBALS['_LANG']['order_status_' . $row['status']];
+            $row['order_amount_format'] = $GLOBALS['dou']->price_format($row['order_amount']);
+            $row['product_list'] = $GLOBALS['dou_order']->get_order_product($row['order_id']);
             
-            $order_list[] = array(
-                    "order_id" => $row['order_id'],
-                    "order_sn" => $row['order_sn'],
-                    "telephone" => $row['telephone'],
-                    "contact" => $row['contact'],
-                    "order_amount" => $row['order_amount'],
-                    "order_amount_format" => $order_amount_format,
-                    "status" => $row['status'],
-                    "status_format" => $status_format,
-                    "add_time" => $add_time,
-                    "product_list" => $product_list
-            );
+            $order_list[] = $row;
         }
-        
         return $order_list;
     }
     

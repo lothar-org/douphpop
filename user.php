@@ -1,25 +1,12 @@
 <?php
-/**
- * WincomtechPHP
- * --------------------------------------------------------------------------------------------------
- * 版权所有 2013-2035 XXX网络科技有限公司，并保留所有权利。
- * 网站地址: http://www.wowlothar.cn
- * --------------------------------------------------------------------------------------------------
- * 这不是一个自由软件！您只能在遵守授权协议前提下对程序代码进行修改和使用；不允许对程序代码以任何形式任何目的的再发布。
- * 授权协议：http://www.wowlothar.cn/license.html
- * --------------------------------------------------------------------------------------------------
- * Author: Lothar
- * Release Date: 2015-10-16
- */
 define('IN_LOTHAR', true);
-
 $sub = 'login|login_post|register|register_post|edit|edit_post|password|password_post|password_reset|password_reset_post|logout|order_list|order|order_cancel';
 $subbox = array(
         "module" => 'user',
         "sub" => $sub
 );
-
 require (dirname(__FILE__) . '/include/init.php');
+// require ROOT_PATH .'public.php';
 
 // rec操作项的初始化
 $rec = $check->is_rec($_REQUEST['rec']) ? $_REQUEST['rec'] : 'default';
@@ -146,8 +133,12 @@ elseif ($rec == 'register_post') {
     $last_login = time();
     $last_ip = $dou->get_ip();
     $login_count = $user['login_count'] + 1;
-
-    $dou->query("update " . $dou->table('user') . " SET login_count = '$login_count', last_login = '$last_login', last_ip = '$last_ip' WHERE user_id = " . $user['user_id']);
+    $data = array(
+            'login_count'  => $login_count,
+            'last_login'  => $last_login,
+            'last_ip'  => $last_ip
+        );
+    $dou->update('user',$data,'user_id='.$user['user_id']);
 
     $dou->dou_msg($_LANG['user_insert_success'], $_URL['user']);
 }
@@ -393,10 +384,16 @@ elseif ($rec == 'edit_post') {
     
     // 安全处理用户输入信息
     $_POST = $firewall->dou_foreground($_POST);
-
-    $sql = "UPDATE " . $dou->table('user') . " SET nickname = '$_POST[nickname]', telephone = '$_POST[telephone]', contact = '$_POST[contact]', address = '$_POST[address]', postcode = '$_POST[postcode]', sex = '$_POST[sex]', defined = '$_POST[defined]' WHERE user_id = '$_USER[user_id]'";
-    
-    $dou->query($sql);
+    $data = array(
+            'nickname'  => $_POST['nickname'],
+            'telephone'  => $_POST['telephone'],
+            'contact'  => $_POST['contact'],
+            'address'  => $_POST['address'],
+            'postcode'  => $_POST['postcode'],
+            'sex'  => $_POST['sex'],
+            'defined'  => $_POST['defined'],
+        );
+    $dou->update('user',$data,'user_id='.$_USER['user_id']);
     
     $dou->dou_msg($_LANG['user_edit_success'], $_URL['edit']);
 }

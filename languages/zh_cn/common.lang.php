@@ -22,7 +22,6 @@ $_LANG['price_format'] = '￥d% 元';
 $_LANG['price_discuss'] = '面议';
 $_LANG['copyright'] = '© d% 2017 All Rights Reserved.';
 $_LANG['powered_by'] = "<a href='http://www.wowlothar.cn' target='_blank'>Powered by WincomtechPHP</a>";
-$_LANG['home'] = '首页';
 $_LANG['add_favorite'] = '收藏本站';
 $_LANG['link'] = '友情链接';
 $_LANG['site_closed'] = '站点维护升级中，请您稍后再来...';

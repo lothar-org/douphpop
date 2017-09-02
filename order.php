@@ -1,25 +1,12 @@
 <?php
-/**
- * WincomtechPHP
- * --------------------------------------------------------------------------------------------------
- * 版权所有 2013-2035 XXX网络科技有限公司，并保留所有权利。
- * 网站地址: http://www.wowlothar.cn
- * --------------------------------------------------------------------------------------------------
- * 这不是一个自由软件！您只能在遵守授权协议前提下对程序代码进行修改和使用；不允许对程序代码以任何形式任何目的的再发布。
- * 授权协议：http://www.wowlothar.cn/license.html
- * --------------------------------------------------------------------------------------------------
- * Author: Lothar
- * Release Date: 2015-10-16
- */
 define('IN_LOTHAR', true);
-
 $sub = 'cart|checkout|update|del|success';
 $subbox = array(
         "module" => 'order',
         "sub" => $sub
 );
-
 require (dirname(__FILE__) . '/include/init.php');
+require ROOT_PATH .'public.php';
 
 // 引入和实例化订单功能
 include_once (ROOT_PATH . 'include/order.class.php');
@@ -33,7 +20,7 @@ $smarty->assign('keywords', $_CFG['site_keywords']);
 $smarty->assign('description', $_CFG['site_description']);
 
 // 赋值给模板-导航栏
-$smarty->assign('nav_top_list', $dou->get_nav('top'));
+// $smarty->assign('nav_top_list', $dou->get_nav('top'));
 $smarty->assign('nav_middle_list', $dou->get_nav('middle', 0, 'order', 0));
 $smarty->assign('nav_bottom_list', $dou->get_nav('bottom'));
 
@@ -182,6 +169,10 @@ elseif ($rec == 'change_shipping') {
  * +----------------------------------------------------------
  */
 elseif ($rec == 'success') {
+    // 验证是否登录
+    if (!is_array($_USER)) {
+        $dou->dou_header($_URL['login']);
+    }
     // 验证手机
     if (!$check->is_telephone($_POST['telephone']))
         $wrong['telephone'] = $_LANG['user_telephone_cue'];
@@ -214,17 +205,11 @@ elseif ($rec == 'success') {
         }
         exit;
     }
-
     if ($wrong) {
         foreach ($wrong as $key => $value) {
             $wrong_format[$key] = '<p class="cue">' . $value . '</p>';
         }
         $dou->dou_msg($wrong_format, $_URL['edit']);
-    }
-
-    // 验证是否登录
-    if (!is_array($_USER)) {
-        $dou->dou_header($_URL['login']);
     }
 
     // CSRF防御令牌验证
@@ -238,7 +223,6 @@ elseif ($rec == 'success') {
     // 获取和格式化数据
     $cart = $dou_order->get_cart($_SESSION[DOU_ID]['cart']);
     $order_sn = $dou_order->create_order_sn();
-    $add_time = time();
     
     // 配送方式信息
     $shipping = $dou->get_plugin($_POST['shipping_id']);
@@ -254,16 +238,35 @@ elseif ($rec == 'success') {
     $_POST = $firewall->dou_foreground($_POST);
 
     // 订单信息插入
-    $dou->query("INSERT INTO " . $dou->table('order') . " (order_id, order_sn, user_id, telephone, contact, address, postcode, pay_id, shipping_id, product_amount, shipping_fee, order_amount, add_time)" . " VALUES (NULL, '$order_sn', '$_USER[user_id]', '$_POST[telephone]', '$_POST[contact]', '$_POST[address]', '$_POST[postcode]', '$_POST[pay_id]', '$_POST[shipping_id]', '$cart[product_amount]', '$shipping_fee', '$order_amount', '$add_time')");
-
-    // 订单商品插入
-    $order_id = mysql_insert_id();
-    foreach ($cart['list'] as $product) {
-        $dou->query("INSERT INTO " . $dou->table('order_product') . " (id, order_id, product_id, name, price, product_number, defined)" . " VALUES (NULL, '$order_id', '$product[id]', '$product[name]', '$product[price_normal]', '$product[number]', '$product[defined]')");
+    $data = array(
+            'order_sn'      => $order_sn,
+            'user_id'       => $_USER['user_id'],
+            'telephone'     => $_POST['telephone'],
+            'contact'       => $_POST['contact'],
+            'address'       => $_POST['address'],
+            'postcode'      => $_POST['postcode'],
+            'pay_id'        => $_POST['pay_id'],
+            'shipping_id'   => $_POST['shipping_id'],
+            'product_amount'=> $cart['product_amount'],
+            'shipping_fee'  => $shipping_fee,
+            'order_amount'  => $order_amount,
+            'add_time'      => time()
+        );
+    $order_id = $dou->insert('order',$data);
+    if (empty($order_id)) {
+        $dou->dou_msg('操作失败！',$_URL['cart']);
     }
 
+    // 订单商品插入
+    $sql = sprintf('INSERT INTO %s (order_id,product_id,name,price,product_number,defined) VALUES ',$dou->table('order_product'));
+    foreach ($cart['list'] as $product) {
+        $sql .= "($order_id, '$product[id]', '$product[name]', '$product[price_normal]', '$product[number]', '$product[defined]'),";
+    }
+    $sql = substr($sql,0,-1);
+    $dou->query($sql);
+
     if ($_POST['update_user_information']) {
-        $dou->query("UPDATE " . $dou->table('user') . " SET telephone = '$_POST[telephone]', contact = '$_POST[contact]', address = '$_POST[address]', postcode = '$_POST[postcode]' WHERE user_id = '$_USER[user_id]'");
+        $dou->query("UPDATE " . $dou->table('user') . " SET telephone='$_POST[telephone]', contact='$_POST[contact]', address='$_POST[address]', postcode='$_POST[postcode]' WHERE user_id='$_USER[user_id]'");
     }
     
     // 显示订单信息

@@ -8,7 +8,12 @@ $cat_id = $firewall->get_legal_id('product_category', $_REQUEST['id'], $_REQUEST
 if ($cat_id == -1) {
     $dou->dou_msg($GLOBALS['_LANG']['page_wrong'], ROOT_URL);
 } else {
-    $where = ' WHERE cat_id IN (' . $cat_id . $dou->dou_child_id('product_category', $cat_id) . ')';
+    $cat_ids = $cat_id . $dou->dou_child_id('product_category', $cat_id);
+    if (is_numeric($cat_ids)) {
+        $where = ' WHERE cat_id='.$cat_ids;
+    } else {
+        $where = ' WHERE cat_id IN ('. $cat_ids .')';
+    }
 }
     
 // 获取分页信息
