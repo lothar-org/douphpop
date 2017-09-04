@@ -1,62 +1,112 @@
 <?php
-/**
- * WincomtechPHP
- * --------------------------------------------------------------------------------------------------
- * 版权所有 2013-2035 XXX网络科技有限公司，并保留所有权利。
- * 网站地址: http://www.wowlothar.cn
- * --------------------------------------------------------------------------------------------------
- * 这不是一个自由软件！您只能在遵守授权协议前提下对程序代码进行修改和使用；不允许对程序代码以任何形式任何目的的再发布。
- * 授权协议：http://www.wowlothar.cn/license.html
- * --------------------------------------------------------------------------------------------------
- * Author: Lothar
- * Release Date: 2015-10-16
- */
-if (!defined('IN_LOTHAR')) {
-    die('Hacking attempt');
-}
+if (!defined('IN_LOTHAR')) die('Hacking attempt');
+
 class Order {
+    /**
+    * 购物车 信息
+    * 检测数据库中是否有值
+    */
+    public function user_cart($uid='all')
+    {
+        if (empty($_SESSION[DOU_ID]['cart'])) {
+            if ($uid=='all') {
+                $us = $GLOBALS['dou']->fetchAll(sprintf('SELECT a.id,a.pro_ids,a.num_ids,a.uid,a.status,a.addtime,b.nickname from %s a join %s b on a.uid=b.user_id',$GLOBALS['dou']->table('cart'),$GLOBALS['dou']->table('user')));
+                foreach ((array)$us as $key => $value) {
+                    $pro_ids = explode(',', $value['pro_ids']);
+                    $num_ids = explode(',', $value['num_ids']);
+                    foreach ($pro_ids as $k => $v) {
+                        $user_cart[$v] = $num_ids[$k];
+                    }
+                    $usa_c = $this->get_cart($user_cart);//只能循环从数据库获取了，子查询似乎不好使
+                    $usa[] = array(
+                        'id'            => $value['id'],
+                        'uid'           => $value['uid'],
+                        'nickname'      => $value['nickname'],
+                        'status'        => $value['status'],
+                        'addtime'       => $value['addtime'],
+                        'url'           => ROOT_URL .'user.php?rec=login&fuid='.$value['uid'],
+                        'total'         => $usa_c['total'],
+                        'product_amount'=> $usa_c['product_amount'],
+                    );
+                }
+                return $usa;
+            } else {
+                $user_cart_c = $GLOBALS['dou']->fetchRow('SELECT pro_ids,num_ids from '. $GLOBALS['dou']->table('cart') .' where uid='.$uid);
+                if (empty($user_cart_c)) {
+                    return array();
+                }
+                $pro_ids = explode(',', $user_cart_c['pro_ids']);
+                $num_ids = explode(',', $user_cart_c['num_ids']);
+                foreach ($pro_ids as $k => $v) {
+                    $user_cart[$v] = $num_ids[$k];
+                }
+                $_SESSION[DOU_ID]['cart'] = $user_cart;
+            }
+        } else {
+            $user_cart = $_SESSION[DOU_ID]['cart'];
+        }
+        return $this->get_cart($user_cart);
+    }
+
     /**
      * +----------------------------------------------------------
      * 用户权限判断
      * +----------------------------------------------------------
-     * $session_cart session储存的商品信息
+     * $session_cart session储存的产品信息  $_SESSION[DOU_ID]['cart']
+     * key value都是未知的，所以不能直接获取key
+     * $shell 选择需要的
      * +----------------------------------------------------------
      */
-    function get_cart($session_cart) {
-        if (is_array($session_cart)) {
-            // 获取购物车商品信息
-            foreach ($session_cart as $product_id=>$number) {
-                $query = $GLOBALS['dou']->select($GLOBALS['dou']->table('product'), '*', "id = '" . $product_id . '\'');
-                $product = $GLOBALS['dou']->fetch_array($query);
-                $price = $product['price'] > 0 ? $GLOBALS['dou']->price_format($product['price']) : $GLOBALS['_LANG']['price_discuss'];
-                $url = $GLOBALS['dou']->rewrite_url('product', $product['id']);
-                $image = explode(".", $product['image']);
-                $thumb = ROOT_URL . $image[0] . "_thumb." . $image[1];
-                $subtotal = $product['price'] > 0 ? $GLOBALS['dou']->price_format($product['price'] * $number) : $GLOBALS['_LANG']['price_discuss'];
-                
-                // 商品列表
-                $cart['list'][] = array(
-                        "id" => $product['id'],
-                        "name" => $product['name'],
-                        "price_normal" => $product['price'],
-                        "price" => $price,
-                        "url" => $url,
-                        "thumb" => $thumb,
-                        "defined" => $product['defined'],
-                        "subtotal" => $subtotal,
-                        "number" => $number
-                );
-                
-                // 商品总数量
-                $cart['total'] += $number;
-                
-                // 商品总金额
-                $cart['product_amount'] += ($product['price'] * $number);
+    function get_cart($session_cart,$shell='') {
+        if (empty($session_cart)) 
+            return array();
+        // 获取产品ID组 和 产品信息
+        // if (is_array($shell)) {
+        //     foreach ($shell as $v) {
+        //         unset($session_cart[$v]);
+        //     }
+        // }
+        // $pro_ids = array_keys($session_cart);
+        // $pro_ids = array_diff($pro_ids,(array)$shell);// 差集
+        $pro_ids = is_array($shell) ? $shell : array_keys($session_cart);
+        // 开始查库
+        if (count($session_cart)>1) {
+            sort($pro_ids);
+            $pro_ids = join(',',$pro_ids);
+            // $pro_ids = implode(',',$pro_ids);
+            // $pro_ids = strrev($pro_ids);
+            $products = $GLOBALS['dou']->fetchAll("SELECT id,name,price,image,defined from ".$GLOBALS['dou']->table('product')." WHERE id IN ({$pro_ids})");
+        } else {
+            // 硬凑一个二维数组
+            $pro_ids = $pro_ids[0];
+            $products[0] = $GLOBALS['dou']->fetchRow("SELECT id,name,price,image,defined from ".$GLOBALS['dou']->table('product')." WHERE id={$pro_ids}");
+        }
+        // return $pro_ids;
+        // return $products;
+
+        // 获取购物车产品信息
+        if (is_array($products)) {
+            foreach ($products as $pro) {
+                $pro['number'] = $session_cart[$pro['id']];
+                $pro['price_normal'] = $pro['price'];
+                $pro['price'] = $pro['price']>0 ? $GLOBALS['dou']->price_format($pro['price']) : $GLOBALS['_LANG']['price_discuss'];
+                $pro['url'] = $GLOBALS['dou']->rewrite_url('product', $pro['id']);
+                $image = explode('.', $pro['image']);
+                $pro['image'] = ROOT_URL . $pro['image'];
+                $pro['thumb'] = ROOT_URL . $image[0] . "_thumb." . $image[1];
+                $pro['subtotal'] = $pro['price_normal'] > 0 ? $GLOBALS['dou']->price_format($pro['price_normal'] * $pro['number']) : $GLOBALS['_LANG']['price_discuss'];
+                // 产品列表
+                $cart['list'][] = $pro;
+
+                // 产品总数量
+                $cart['total'] += $pro['number'];
+                // 产品总金额
+                $cart['product_amount'] += ($pro['price_normal'] * $pro['number']);
                 $cart['product_amount_format'] = $GLOBALS['dou']->price_format($cart['product_amount']);
             }
-            
             return $cart;
         }
+        return array();
     }
     
     /**
@@ -190,7 +240,6 @@ class Order {
         
         return $shipping_list;
     }
-    
 
 }
 ?>
