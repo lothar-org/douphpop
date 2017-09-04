@@ -52,7 +52,7 @@ select {border: 1px solid #DBDBDB; padding: 5px 5px 5px 2px; }
 /*- tab -*/
 .tab {border-bottom: 1px solid #60BBFF; font-weight: bold; font-size: 14px; height: 35px; overflow: hidden; }
 .tab li {float: left; line-height: 35px; height: 35px; }
-.tab a {display: block; background-color: #F9F9F9; padding: 0 44px; text-decoration: none; color: #999; }
+.tab a {display: block; background-color: #F9F9F9; padding: 0 20px; text-decoration: none; color: #999; }
 .tab a.selected {background-color: #60BBFF; color: #FFF; }
 /*- tableBasic -*/
 .tableBasic {background-color: #F9F9F9; color: #666666; border-left: 1px dotted #CCCCCC; border-top: 1px dotted #CCCCCC; }

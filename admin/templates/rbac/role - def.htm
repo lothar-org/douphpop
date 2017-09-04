@@ -1,0 +1,105 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>{$lang.home}{if $ur_here} - {$ur_here} {/if}</title>
+  <meta name="Copyright" content="Lothar Design." />
+  <link href="templates/public.css" rel="stylesheet" type="text/css">
+  {include file="javascript.htm"}
+</head>
+<body>
+  <div id="dcWrap">
+    {include file="header.htm"}
+    <div id="dcLeft">{include file="menu.htm"}</div>
+    <div id="dcMain">
+      {include file="ur_here.htm"}
+      <div class="mainBox" style="{$workspace.height}">
+        <!--{if $rec eq 'default'} 分类列表 -->
+        <h3><a href="{$action_link.href}" class="actionBtn add">{$action_link.text}</a>{$ur_index}</h3>
+        <table width="100%" border="0" cellpadding="8" cellspacing="0" class="tableBasic">
+          <tr>
+            <th width="120" align="left">编号</th>
+            <th align="left">角色code码</th>
+            <th align="left">角色名</th>
+            <th width="80" align="center">{$lang.handler}</th>
+          </tr>
+          <!--{foreach from=$roles item=role}-->
+          <tr>
+            <td align="left">{$role.rid}</td>
+            <td>{$role.code}</td>
+            <td>{$role.name}</td>
+            <td align="center">
+              <a href="rbac.php?rec=op&loid={$role.rid}">{$lang.edit}</a> | 
+              <a href="rbac.php?rec=del&loid={$role.rid}">{$lang.del}</a>
+            </td>
+          </tr>
+          <!--{/foreach}-->
+        </table>
+        <!--{/if}-->
+        
+        <!--{if $rec eq 'op'} 分类添加或编辑 -->
+        <h3><a href="{$action_link.href}" class="actionBtn">{$action_link.text}</a>{$ur_index}</h3>
+        <form action="rbac.php?rec={$form_action}" method="post">
+          <table width="100%" border="0" cellpadding="8" cellspacing="0" class="tableBasic">
+            <tr>
+              <td width="80" align="right">{$lang.role_name}</td>
+              <td>
+                <input type="text" name="cat_name" value="{$cat_info.cat_name}" size="40" class="inpMain" />
+              </td>
+            </tr>
+            <tr>
+              <td align="right">{$lang.unique}</td>
+              <td>
+                <input type="text" name="unique_id" value="{$cat_info.unique_id}" size="40" class="inpMain" />
+              </td>
+            </tr>
+            <tr>
+              <td align="right">{$lang.parent}</td>
+              <td>
+                <select name="parent_id">
+                  <option value="0">{$lang.empty}</option>
+                  <!--{foreach from=$roles item=role}-->
+                  <!--{if $role.rid eq $role.parent_id}-->
+                  <option value="{$role.rid}" selected="selected">{$role.mark} {$role.cat_name}</option>
+                  <!--{else}-->
+                  <option value="{$role.rid}">{$role.mark} {$role.cat_name}</option>
+                  <!--{/if}-->
+                  <!--{/foreach}-->
+                </select>
+              </td>
+            </tr>
+            <tr>
+              <td align="right">{$lang.keywords}</td>
+              <td>
+                <input type="text" name="keywords" value="{$cat_info.keywords}" size="40" class="inpMain" />
+              </td>
+            </tr>
+            <tr>
+              <td align="right">{$lang.description}</td>
+              <td>
+                <textarea name="description" cols="60" rows="4" class="textArea">{$cat_info.description}</textarea>
+              </td>
+            </tr>
+            <tr>
+              <td align="right">{$lang.sort}</td>
+              <td>
+                <input type="text" name="sort" value="{if $cat_info.sort}{$cat_info.sort}{else}50{/if}" size="5" class="inpMain" />
+              </td>
+            </tr>
+            <tr>
+              <td></td>
+              <td>
+                <input type="hidden" name="token" value="{$token}" />
+                <input type="hidden" name="cat_id" value="{$cat_info.cat_id}" />
+                <input name="submit" class="btn" type="submit" value="{$lang.btn_submit}" />
+              </td>
+            </tr>
+          </table>
+        </form>
+        <!--{/if}-->
+      </div>
+    </div>
+    {include file="footer.htm"}
+  </div>
+</body>
+</html>

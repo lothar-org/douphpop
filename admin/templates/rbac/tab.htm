@@ -1,0 +1,7 @@
+
+<h3><!-- {if $action_link} --><a href="{$action_link.href}" class="actionBtn {if $rec eq 'default'}add{/if}">{$action_link.text}</a><!-- {/if} -->{$ur_index}</h3>
+<p >
+  <a class="rbac_tab {if $cur_tab eq 'role'}rbac_tab_cur{/if}" href="rbac.php">角色列表</a>
+  <a class="rbac_tab {if $cur_tab eq 'awr'}rbac_tab_cur{/if}" href="rbac.php?rec=awr">角色与用户</a>
+  <a class="rbac_tab {if $cur_tab eq 'rwm'}rbac_tab_cur{/if}" href="rbac.php?rec=rwm">角色与模块</a>
+</p>

@@ -1,0 +1,59 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>{$lang.home}{if $ur_index} - {$ur_index}{else}{if $ur_here} - {$ur_here} {/if}{/if}</title>
+  <meta name="Copyright" content="Lothar Design." />
+  <link href="templates/public.css" rel="stylesheet" type="text/css">
+  <link href="templates/rbac/rbac.css" rel="stylesheet" type="text/css">
+  {include file="javascript.htm"}
+</head>
+<body>
+  <div id="dcWrap">
+    {include file="header.htm"}
+    <div id="dcLeft">{include file="menu.htm"}</div>
+    <div id="dcMain">
+      {include file="ur_here.htm"}
+      <div class="mainBox" style="{$workspace.height}">
+        {include file="rbac/tab.htm"}
+        <form action="rbac.php?rec=awr_form" method="post">
+          <table width="100%" border="0" cellpadding="8" cellspacing="0" class="tableBasic">
+            <tr>
+              <td width="80" align="right">请选择角色：</td>
+              <td>
+              <select id="selthis">
+                  {foreach $roles $v}
+                  <option {if $loid eq $v.rid}selected{/if} value="{$v.rid}">{$v.name}</option>
+                  {/foreach}
+              </select>
+              </td>
+            </tr>
+            <tr>
+              <td align="right">请选择用户：</td>
+              <td>
+                {foreach $users as $k=>$v}
+                <label class="rbac_label"><input class="inpMain ck" type="checkbox" value="{$v.user_id}"> {$v.user_name}</label>
+                <!-- {if $k%10 eq 0} --><br><!-- {/if} -->
+                {/foreach}
+              </td>
+            </tr>
+
+            <tr>
+              <td></td>
+              <td>
+                <input type="hidden" name="token" value="{$token}" />
+                <input type="hidden" name="loid" value="{$loid}" />
+                <input id="lokey" type="hidden" name="lokey" value="{$lokey}" />
+                <input id="return_url" type="hidden" name="return_url" value="rbac.php?rec=ajax">
+                <input id="btn" class="btn" type="button" value="{$lang.btn_submit}" />
+                <span id="msgtips"></span>
+              </td>
+            </tr>
+          </table>
+        </form>
+      </div>
+    </div>
+    {include file="footer.htm"}
+  </div>
+</body>
+</html>

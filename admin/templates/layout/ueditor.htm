@@ -1,0 +1,24 @@
+<script>
+// var UEDITOR_HOME_URL = "include/ueditor/";　　//在引入script脚本前声明并复制就可以正常使用了;从项目的根目录开始
+</script>
+<!-- 配置文件 -->
+<script type="text/javascript" src="include/ueditor/ueditor.config.js"></script>
+<!-- 编辑器源码文件 -->
+<script type="text/javascript" src="include/ueditor/ueditor.all.min.js"></script>
+<!-- 实例化编辑器 -->
+<script type="text/javascript">
+{literal}
+    //实例化编辑器时传入配置参数
+    var ue = UE.getEditor('container', {
+        toolbars:[['source','undo','redo','bold','italic','|','pasteplain','forecolor','backcolor','link','|','insertvideo','music','simpleupload','insertimage','emotion','|','attachment','map','fullscreen']]
+        ,initialFrameWidth:1000      //初始化编辑器宽度,默认1000
+        ,initialFrameHeight:400     //初始化编辑器高度,默认320
+        ,autoHeightEnabled:false    //自动长高
+        ,elementPathEnabled:false   //是否启用元素路径，默认是显示
+        // ,iframeCssUrl:"include/ueditor/themes/iframe.css"  //自定义样式,UEDITOR_HOME_URL为最开始声明的
+        ,indentValue:'2em'          //首行缩进距离
+        ,wordCount:false            //是否开启字数统计
+        ,maximumWords:5000          //允许的最大字符数
+    });
+{/literal}
+</script>

@@ -27,12 +27,14 @@ if (!file_exists(ROOT_PATH . "data/system.dou")) {
 require (ROOT_PATH . 'include/mysql.class.php');
 require (ROOT_PATH . 'include/common.class.php');
 require (ROOT_PATH . ADMIN_PATH . '/include/action.class.php');
+require (ROOT_PATH . ADMIN_PATH . '/include/rbac.class.php');
 require (ROOT_PATH . 'include/check.class.php');
 require (ROOT_PATH . 'include/firewall.class.php');
 require (ROOT_PATH . 'include/memory.class.php');
 
 // 实例化DouPHP核心类
 $dou = new Action($dbhost, $dbuser, $dbpass, $dbname, $prefix, DOU_CHARSET);
+$rbac = new RBAC();
 $check = new Check();
 $firewall = new Firewall();
 $memory = new Memory();
