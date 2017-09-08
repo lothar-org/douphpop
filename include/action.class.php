@@ -140,9 +140,8 @@ class Action extends Common {
      * +----------------------------------------------------------
      */
     function dou_msg($text, $url = '', $time = 3) {
-        if (!$text) {
+        if (!$text) 
             $text = $GLOBALS['_LANG']['dou_msg_success'];
-        }
         
         /* 获取meta和title信息 */
         $GLOBALS['smarty']->assign('page_title', $GLOBALS['_CFG']['site_title']);
@@ -166,8 +165,35 @@ class Action extends Common {
         $GLOBALS['smarty']->assign('cue', $cue);
         
         $GLOBALS['smarty']->display('dou_msg.dwt');
-        
         exit();
+    }
+
+    /*弹窗*/
+    public function popup($msg='', $style, $time=3, $ext='')
+    {
+        // global $_CFG['theme_s'];
+        // <link href="doubox.css" rel="stylesheet" type="text/css" />
+        $doubox = <<<EOT
+            <div id="douBox">
+                <link rel="stylesheet" href="/theme/default/doubox.css"/>
+                <div class="boxBg"></div>
+                <div class="boxFrame">
+                    <h2><a href="javascript:void(0)" class="close" onclick="douRemove('douBox')">X</a>提示</h2>
+                    <div class="boxCon">
+                        <dt>{$msg}</dt>
+                        <dd></dd>
+                        <dd></dd>
+                    </div>
+                </div>
+            </div>
+EOT;
+        return $doubox;
+    }
+
+    /*JSON*/
+    public function djson($code=1, $msg='OK', $ext='')
+    {
+        echo json_encode(array('code'=>$code,'msg'=>$msg,'ext'=>$ext));exit;
     }
 }
 ?>

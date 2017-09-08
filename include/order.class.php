@@ -70,17 +70,20 @@ class Order {
         // $pro_ids = array_diff($pro_ids,(array)$shell);// 差集
         $pro_ids = is_array($shell) ? $shell : array_keys($session_cart);
         // 开始查库
+        // $fields = $GLOBALS['dou']->create_fields_quote($fields,'a');
+        $sql = sprintf('SELECT id,name,price,image,defined from %s where id ',$GLOBALS['dou']->table('product'));
         if (count($session_cart)>1) {
             sort($pro_ids);
             $pro_ids = join(',',$pro_ids);
             // $pro_ids = implode(',',$pro_ids);
             // $pro_ids = strrev($pro_ids);
-            $products = $GLOBALS['dou']->fetchAll("SELECT id,name,price,image,defined from ".$GLOBALS['dou']->table('product')." WHERE id IN ({$pro_ids})");
+            $products = $GLOBALS['dou']->fetchAll($sql ."IN ({$pro_ids})");
         } else {
             // 硬凑一个二维数组
-            $pro_ids = $pro_ids[0];
-            $products[0] = $GLOBALS['dou']->fetchRow("SELECT id,name,price,image,defined from ".$GLOBALS['dou']->table('product')." WHERE id={$pro_ids}");
+            $pro_ids = intval($pro_ids[0]);
+            $products[0] = $GLOBALS['dou']->fetchRow($sql .'='. $pro_ids);
         }
+
         // return $pro_ids;
         // return $products;
 

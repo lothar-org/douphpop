@@ -34,9 +34,9 @@
      <td align="center" valign="top">{$plugin.ver}</td>
      <td align="center" valign="top">
       <!--{if $plugin.enabled}-->
-      <a href="plugin.php?rec=disable&unique_id={$plugin.unique_id}">{$lang.plugin_disable}</a> | <a href="plugin.php?rec=edit&unique_id={$plugin.unique_id}">{$lang.edit}</a>
+      <a style="color:#FF8D39" href="plugin.php?rec=disable&unique_id={$plugin.unique_id}"><b>{$lang.plugin_disable}</b></a> | <a href="plugin.php?rec=edit&unique_id={$plugin.unique_id}"><b>{$lang.edit}</b></a>
       <!--{else}-->
-      <a href="plugin.php?rec=enable&unique_id={$plugin.unique_id}">{$lang.plugin_enable_btn}</a> | <a href="plugin.php?rec=del&unique_id={$plugin.unique_id}">{$lang.del}</a>
+      <a style="color:#0072C6" href="plugin.php?rec=enable&unique_id={$plugin.unique_id}"><b>{$lang.plugin_enable_btn}</b></a> | <a href="plugin.php?rec=del&unique_id={$plugin.unique_id}"><b>{$lang.del}</b></a>
       <!--{/if}-->
      </td>
     </tr>

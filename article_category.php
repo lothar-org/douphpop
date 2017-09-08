@@ -8,11 +8,15 @@ $cat_id = $firewall->get_legal_id('article_category', $_REQUEST['id'], $_REQUEST
 if ($cat_id == -1) {
     $dou->dou_msg($GLOBALS['_LANG']['page_wrong'], ROOT_URL);
 } else {
-    $cat_ids = $cat_id . $dou->dou_child_id('article_category', $cat_id);
-    if (strpos($cat_ids,',')) {
-        $where = ' WHERE cat_id IN ('. $cat_ids .')';
+    if ($cat_id) {
+        $cat_ids = $cat_id . $dou->dou_child_id('article_category', $cat_id);
+        if (strpos($cat_ids,',')) {
+            $where = ' WHERE cat_id IN ('. $cat_ids .')';
+        } else {
+            $where = ' WHERE cat_id='.$cat_ids;
+        }
     } else {
-        $where = ' WHERE cat_id='.$cat_ids;
+        $where = '';
     }
 }
     

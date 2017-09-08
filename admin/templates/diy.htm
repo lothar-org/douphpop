@@ -18,8 +18,8 @@
     <!--{if $rec eq 'default'} DIY列表 -->
     <h3>
       <a href="{$action_link.href}" class="actionBtn add">{$action_link.text}</a>
-      <a class="action_ls" href="diy_category.php">DIY分类</a>
-      <a class="action_ls" href="diy.php">DIY列表</a>
+      <a {if $cur eq 'diy_category'} class="action_ls"{/if} href="diy_category.php">DIY分类</a>
+      <a {if $cur eq 'diy'} class="action_ls"{/if} href="diy.php">DIY列表</a>
     </h3>
     <div class="filter">
     <form action="diy.php" method="post">
