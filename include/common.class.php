@@ -747,6 +747,22 @@ class Common extends DbMysql {
                 return ture;
         }
     }
+
+    /**
+     * +----------------------------------------------------------
+     * 手机短信验证码
+     * 云片网
+     * +----------------------------------------------------------
+     * $mobile 对象手机号
+     * +----------------------------------------------------------
+    */
+    public function send_msg($mobile='', $plugin_id='yunpian')
+    {
+        require ROOT_PATH .'include/plugin/'. $plugin_id .'/work.plugin.php';
+        $plugin = new Plugin($mobile);
+
+        return $plugin->work();
+    }
     
 
 
@@ -1130,20 +1146,20 @@ class Common extends DbMysql {
     {
         $dump = empty($var) ? true : $dump;
         if ($dump) {
-            echo '<pre>';
-            var_dump($var);
+            echo '<pre>';var_dump($var);
         } else {
-            if (!is_array($var)) {
+            if (is_string($var)) {
                 echo $var.'<br>';
-            } elseif (!$dump) {
-                echo '<pre>';
-                print_r($var);
+            } elseif (is_object()) {
+                echo '<pre>';var_dump($var);
+            } elseif (is_array($var)) {
+                echo '<pre>';print_r($var);
             }
         }
-        if (is_array($var)) {
+        if (!is_string($var)) 
             echo '</pre>';
-        }
-        if ($die){exit();}
+        if ($die)
+            exit();
     }
 
 }

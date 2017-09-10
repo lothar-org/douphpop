@@ -316,3 +316,8 @@ select {border: 1px solid #DBDBDB; padding: 5px 5px 5px 2px; }
 #footer .line {border-top: 1px solid #FFFFFF; background-color: #CCCCCC; height: 1px; line-height: 1px; font-size: 0; margin-left: 180px; }
 #footer ul {text-align: center; padding: 15px 0; }
 
+
+
+/* 补充样式 */
+.action_ls{background-color:#4C9ED9;color:#FFF;padding:5px;}
+
