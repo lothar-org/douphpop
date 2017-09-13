@@ -1,5 +1,4 @@
-  {include file="inc/head_base.tpl"}
-  <link href="style.css" type="text/css" rel="stylesheet" />
+  {include file="inc/head.tpl"}
   <link href="gallery.css" type="text/css" rel="stylesheet" />
 </head>
 <body>

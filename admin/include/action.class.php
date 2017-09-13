@@ -76,12 +76,12 @@ class Action extends Common {
                 $this->admin_ontime(10800);
                 if (is_array($row)) {
                     $user = array(
-                            'user_id' => $row['user_id'],
-                            'user_name' => $row['user_name'],
-                            'email' => $row['email'],
-                            'action_list' => $row['action_list'] 
+                        'user_id' => $row['user_id'],
+                        'user_name' => $row['user_name'],
+                        'email' => $row['email'],
+                        'action_list' => $row['action_list'],
+                        'action_level' => $row['action_level']
                     );
-                    
                     return $user;
                 }
             } else {
@@ -97,7 +97,7 @@ class Action extends Common {
      */
     function admin_state($user_id, $shell) {
         $query = $this->select($this->table('admin'), '*', '`user_id` = \'' . $user_id . '\'');
-        $user = $this->fetch_array($query);
+        $user = $this->fetch_assoc($query);
         
         // 如果$user则开始比对$shell值
         $check_shell = is_array($user) ? $shell == md5($user['user_name'] . $user['password'] . DOU_SHELL) : FALSE;

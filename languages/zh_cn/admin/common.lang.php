@@ -188,6 +188,7 @@ $_LANG['site_logo'] = '站点标志';
 $_LANG['site_address'] = '公司地址';
 $_LANG['site_closed'] = '是否关闭网站';
 $_LANG['icp'] = 'ICP备案证书号';
+$_LANG['copyright'] = '版权';
 $_LANG['tel'] = '客服电话';
 $_LANG['fax'] = '传真';
 $_LANG['qq'] = '客服QQ号码';
