@@ -1,0 +1,70 @@
+
+/* -- douBox -- */
+#douBox .boxBg {
+ position: fixed;
+ top: 0;
+ left: 0;
+ z-index: 10000001;
+ width: 100%;
+ height: 100%;
+ background: #000;
+ filter: alpha(opacity=15);
+ opacity:0.15
+}
+#douBox .boxFrame {
+ position: absolute;
+ z-index: 10000002;
+ overflow: hidden;
+ padding: 0;
+ border: 2px solid #C4C4C4;
+ background-color:#FFF;
+ width:360px;
+ left:50%;
+ top:300px;
+ margin-left:-180px;
+}
+#douBox .boxFrame h2 {
+ height: 28px;
+ padding: 0 10px;
+ background: #f5f5f5;
+ line-height: 28px;
+ color: #666;
+ font-size:14px;
+ font-weight:normal;
+}
+#douBox .boxFrame h2 .close {
+ background: url(images/icon_fork.png) no-repeat;
+ width:12px;
+ height:12px;
+ display:block;
+ float:right;
+ text-indent:-9999px;
+ margin-top:8px;
+}
+#douBox .boxFrame .boxCon {
+ background: url(images/icon_exclamation.png) no-repeat 15px 15px;
+ padding:13px 10px 15px 70px;
+ height:100px;
+}
+#douBox .boxFrame .boxCon dt {
+ font-family:Microsoft YaHei;
+ font-size:16px;
+ color:#19B4EA;
+ font-weight:bold;
+}
+#douBox .boxFrame .boxCon dd {
+ color:#999;
+ zoom:1;
+ overflow:hidden;
+}
+#douBox .boxFrame .boxCon dd a {
+ background-color:#F5F5F5;
+ border: 1px solid #CBD1D3;
+ display:block;
+ float:left;
+ width:70px;
+ line-height:26px;
+ text-align:center;
+ margin:10px 12px 0 0;
+ text-decoration:none;
+}

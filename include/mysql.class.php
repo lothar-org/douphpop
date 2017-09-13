@@ -193,8 +193,8 @@ class DbMysql {
     public function insert($table='',$data)
     {
         if (is_array($data)) {
-            $keys = join(",",array_keys($data));
-            $vals = '\''.join("','",array_values($data)).'\'';
+            $keys = '`'. join('`,`',array_keys($data)) .'`';
+            $vals = '\''. join("','",array_values($data)).'\'';
             $sql="INSERT INTO ".$this->table($table)." ({$keys}) VALUES ({$vals})";
         } else {
             $sql = $data;
@@ -212,9 +212,9 @@ class DbMysql {
     public function update($table='',$data,$where=null)
     {
         foreach ($data as $key => $val) {
-            $sep = ($str==null)?'':',';
-            $str.=$sep.$key."='".$val.'\'';
+            $str .= '`'. $key .'`=\''. $val .'\',';
         }
+        $str = substr($str,0,-1);
         $sql="update ".$this->table($table)." set {$str}". ($where==null?'':" where ".$where);
         $result = $this->query($sql);
         $affected_rows = $this->affected_rows();

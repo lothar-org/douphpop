@@ -36,7 +36,7 @@ require_once("lib/alipay_notify.class.php");
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 <?php
 //计算得出通知验证结果
-$alipayNotify = new AlipayNotify($plugin->alipay_config());
+$alipayNotify = new AlipayNotify($plugin->p_config());
 $verify_result = $alipayNotify->verifyReturn();
 if ($verify_result) {//验证成功
     //请在这里加上商户的业务逻辑程序代码

@@ -39,9 +39,44 @@ class Plugin {
     function work() {
         // 建立请求
         require_once(ROOT_PATH . 'include/plugin/' . $this->plugin_id . '/lib/alipay_submit.class.php');
-        $alipaySubmit = new AlipaySubmit($this->alipay_config());
-        $html_text = $alipaySubmit->buildRequestForm($this->parameter(),"get", "立即付款");
+        $alipaySubmit = new AlipaySubmit($this->p_config());
+        $html_text = $alipaySubmit->buildRequestForm($this->parameter(),"get", "付款");
         return $html_text;
+    }
+
+    /**
+     * +----------------------------------------------------------
+     * 支付URL
+     * +----------------------------------------------------------
+     * $session_cart session储存的商品信息
+     * +----------------------------------------------------------
+     */
+    function workurl() {
+        // 建立请求
+        require_once(ROOT_PATH . 'include/plugin/' . $this->plugin_id . '/lib/alipay_submit.class.php');
+        $alipaySubmit = new AlipaySubmit($this->p_config());
+        $sResult = $alipaySubmit->buildRequestURL($this->parameter());
+
+        // URL跳转
+        $sResult = str_replace('&amp','&',$sResult);// 替换实体字符
+        echo '<script src="'.THEME_S.'js/jquery-1.12.1.min.js"></script><script type="text/javascript">window.location.href="'.$sResult.'"</script>';exit;
+
+        // return $sResult;
+    }
+
+    /**
+     * +----------------------------------------------------------
+     * 直达支付页面
+     * +----------------------------------------------------------
+     * $session_cart session储存的商品信息
+     * +----------------------------------------------------------
+     */
+    function workcurl() {
+        // 建立请求
+        require_once(ROOT_PATH . 'include/plugin/' . $this->plugin_id . '/lib/alipay_submit.class.php');
+        $alipaySubmit = new AlipaySubmit($this->p_config());
+        $sResult = $alipaySubmit->buildRequestHttp($this->parameter());
+        return $sResult;
     }
 
     /**
@@ -49,33 +84,34 @@ class Plugin {
      * 配置信息
      * +----------------------------------------------------------
      */
-    function alipay_config() {
+    function p_config() {
         // 获取插件配置信息
         $plugin = $GLOBALS['dou']->get_plugin($this->plugin_id);
         
         // 合作身份者id，以2088开头的16位纯数字
-        $alipay_config['partner']  = $plugin['config']['partner'];
+        $p_config['partner']  = $plugin['config']['partner'];
         
         // 收款支付宝账号
-        $alipay_config['seller_email'] = $plugin['config']['seller_email'];
+        $p_config['seller_email'] = $plugin['config']['seller_email'];
         
         // 安全检验码，以数字和字母组成的32位字符
-        $alipay_config['key']   = $plugin['config']['key'];
+        $p_config['key']   = $plugin['config']['key'];
         
         // 签名方式 不需修改
-        $alipay_config['sign_type']    = strtoupper('MD5');
+        $p_config['sign_type']    = strtoupper('MD5');
         
         // 字符编码格式 目前支持 gbk 或 utf-8
-        $alipay_config['input_charset']= strtolower('utf-8');
+        $p_config['input_charset']= strtolower('utf-8');
+        // $p_config['input_charset']= strtolower('gbk');
         
         // ca证书路径地址，用于curl中ssl校验
         // 请保证cacert.pem文件在当前文件夹目录中
-        $alipay_config['cacert']    = ROOT_PATH . 'include/plugin/' . $this->plugin_id . '/cacert.pem';
+        $p_config['cacert']    = ROOT_PATH . 'include/plugin/' . $this->plugin_id . '/cacert.pem';
         
         // 访问模式,根据自己的服务器是否支持ssl访问，若支持请选择https；若不支持请选择http
-        $alipay_config['transport']    = 'http';
+        $p_config['transport']    = 'http';
         
-        return $alipay_config;
+        return $p_config;
     }
 
     /**

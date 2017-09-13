@@ -27,9 +27,12 @@ while ($row = $dou->fetch_array($query)) {
     $row['add_time'] = date("Y-m-d", $row['add_time']);
     // 如果描述不存在则自动从详细介绍中截取
     $row['description'] = $row['description'] ? $row['description'] : $dou->dou_substr($row['content'], 150, false);
-    // 生成缩略图的文件名
-    $image = explode(".", $row['image']);
-    $row['thumb'] = ROOT_URL . $image[0] . "_thumb." . $image[1];
+    if ($row['image']) {
+        // 生成缩略图的文件名
+        $image = explode('.', $row['image']);
+        $row['thumb'] = ROOT_URL . $image[0] . "_thumb." . $image[1];
+        // $row['image'] = ROOT_URL . $row['image'];
+    }
     // 格式化价格
     $row['price'] = $row['price'] > 0 ? $dou->price_format($row['price']) : $_LANG['price_discuss'];
     $product_list[] = $row;

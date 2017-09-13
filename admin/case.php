@@ -1,18 +1,5 @@
 <?php
-/**
- * WincomtechPHP
- * --------------------------------------------------------------------------------------------------
- * 版权所有 2013-2035 XXX网络科技有限公司，并保留所有权利。
- * 网站地址: http://www.wowlothar.cn
- * --------------------------------------------------------------------------------------------------
- * 这不是一个自由软件！您只能在遵守授权协议前提下对程序代码进行修改和使用；不允许对程序代码以任何形式任何目的的再发布。
- * 授权协议：http://www.wowlothar.cn/license.html
- * --------------------------------------------------------------------------------------------------
- * Author: Lothar
- * Release Date: 2015-06-10
- */
 define('IN_LOTHAR', true);
-
 require (dirname(__FILE__) . '/include/init.php');
 
 // rec操作项的初始化
@@ -21,7 +8,8 @@ $rec = $check->is_rec($_REQUEST['rec']) ? $_REQUEST['rec'] : 'default';
 // 图片上传
 include_once (ROOT_PATH . 'include/upload.class.php');
 $images_dir = 'images/case/'; // 文件上传路径，结尾加斜杠
-$img = new Upload(ROOT_PATH . $images_dir); // 实例化类文件
+$thumb_dir = ''; // 缩略图路径（相对于$images_dir） 
+$img = new Upload(ROOT_PATH . $images_dir, $thumb_dir); // 实例化类文件
 if (!file_exists(ROOT_PATH . $images_dir))
     mkdir(ROOT_PATH . $images_dir, 0777);
 
@@ -48,29 +36,22 @@ if ($rec == 'default') {
     // 筛选条件
     $where = ' WHERE cat_id IN (' . $cat_id . $dou->dou_child_id('case_category', $cat_id) . ')';
     if ($keyword) {
-        $where = $where . " AND title LIKE '%$keyword%'";
+        $where .= ($where ? ' AND ' : ' WHERE ') . "a.title LIKE '%$keyword%'";
         $get = '&keyword=' . $keyword;
     }
     
     // 分页
     $page = $check->is_number($_REQUEST['page']) ? $_REQUEST['page'] : 1;
     $page_url = 'case.php' . ($cat_id ? '?cat_id=' . $cat_id : '');
-    $limit = $dou->pager('case', 15, $page, $page_url, $where, $get);
-    
-    $sql = "SELECT id, title, cat_id, image, add_time FROM " . $dou->table('case') . $where . " ORDER BY id DESC" . $limit;
+    $where2 = str_replace('a.', '', $where);
+    $limit = $dou->pager('case', 15, $page, $page_url, $where2, $get);
+    // 查询数据
+    $fields = $dou->create_fields_quote('id,title,cat_id,image,add_time','a');
+    $sql = sprintf("SELECT %s,b.cat_name from %s a left join %s b on a.cat_id=b.cat_id %s ORDER BY %s %s", $fields,$dou->table('case'),$dou->table('case_category'),$where,'a.id DESC',$limit);
     $query = $dou->query($sql);
-    while ($row = $dou->fetch_array($query)) {
-        $cat_name = $dou->get_one("SELECT cat_name FROM " . $dou->table('case_category') . " WHERE cat_id = '$row[cat_id]'");
-        $add_time = date("Y-m-d", $row['add_time']);
-        
-        $case_list[] = array(
-                "id" => $row['id'],
-                "cat_id" => $row['cat_id'],
-                "cat_name" => $cat_name,
-                "title" => $row['title'],
-                "image" => $row['image'],
-                "add_time" => $add_time 
-        );
+    while ($row = $dou->fetch_array($query,MYSQL_ASSOC)) {
+        $row['add_time'] = date("Y-m-d", $row['add_time']);
+        $case_list[] = $row;
     }
     
     // 首页显示案例数量限制框
@@ -137,9 +118,18 @@ elseif ($rec == 'insert') {
         
     // CSRF防御令牌验证
     $firewall->check_token($_POST['token']);
-    
-    $sql = "INSERT INTO " . $dou->table('case') . " (id, cat_id, title, defined, content, image ,keywords, description, add_time)" . " VALUES (NULL, '$_POST[cat_id]', '$_POST[title]', '$_POST[defined]', '$_POST[content]', '$image', '$_POST[keywords]', '$_POST[description]', '$add_time')";
-    $dou->query($sql);
+
+    $data = array(
+            'cat_id'    => $_POST['cat_id'],
+            'title'    => $_POST['title'],
+            'defined'    => $_POST['defined'],
+            'content'    => $_POST['content'],
+            'image'    => $image,
+            'keywords'    => $_POST['keywords'],
+            'description'    => $_POST['description'],
+            'add_time'    => $add_time,
+        );
+    $res = $dou->insert('article',$data);
     
     $dou->create_admin_log($_LANG['case_add'] . ': ' . $_POST['title']);
     $dou->dou_msg($_LANG['case_add_succes'], 'case.php');
@@ -191,7 +181,9 @@ elseif ($rec == 'update') {
         
     // 图片上传
     if ($_FILES['image']['name'] != '') {
-        $image = ", image = '" . $images_dir . $img->upload_image('image', $img->create_file_name('case', $_POST['id'], 'image')) . '\'';
+        $image_name = $img->upload_image('image', $img->create_file_name('case', $_POST['id'], 'image'));
+        $image = $images_dir . $image_name;
+        // $img->make_thumb($image_name, $_CFG['thumb_width'], $_CFG['thumb_height']);
     }
     
     // 格式化自定义参数
@@ -200,8 +192,17 @@ elseif ($rec == 'update') {
     // CSRF防御令牌验证
     $firewall->check_token($_POST['token']);
     
-    $sql = "UPDATE " . $dou->table('case') . " SET cat_id = '$_POST[cat_id]', title = '$_POST[title]', defined = '$_POST[defined]' ,content = '$_POST[content]'" . $image . ", keywords = '$_POST[keywords]', description = '$_POST[description]' WHERE id = '$_POST[id]'";
-    $dou->query($sql);
+    $data = array(
+            'cat_id'  => $_POST['cat_id'],
+            'title'  => $_POST['title'],
+            'defined'  => $_POST['defined'],
+            'content'  => $_POST['content'],
+            'keywords'  => $_POST['keywords'],
+            'description'  => $_POST['description'],
+        );
+    // if ($image) 
+    //     $data['image'] = $image;
+    $res = $dou->update('case',$data,"id='$_POST[id]'");
 
     $dou->create_admin_log($_LANG['case_edit'] . ': ' . $_POST['title']);
     $dou->dou_msg($_LANG['case_edit_succes'], 'case.php');

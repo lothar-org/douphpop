@@ -1,18 +1,5 @@
 <?php
-/**
- * WincomtechPHP
- * --------------------------------------------------------------------------------------------------
- * 版权所有 2013-2035 XXX网络科技有限公司，并保留所有权利。
- * 网站地址: http://www.wowlothar.cn
- * --------------------------------------------------------------------------------------------------
- * 这不是一个自由软件！您只能在遵守授权协议前提下对程序代码进行修改和使用；不允许对程序代码以任何形式任何目的的再发布。
- * 授权协议：http://www.wowlothar.cn/license.html
- * --------------------------------------------------------------------------------------------------
- * Author: Lothar
- * Release Date: 2015-06-10
- */
 define('IN_LOTHAR', true);
-
 require (dirname(__FILE__) . '/include/init.php');
 
 // rec操作项的初始化
@@ -71,8 +58,15 @@ elseif ($rec == 'insert') {
     // CSRF防御令牌验证
     $firewall->check_token($_POST['token']);
     
-    $sql = "INSERT INTO " . $dou->table('case_category') . " (cat_id, unique_id, parent_id, cat_name, keywords, description, sort)" . " VALUES (NULL, '$_POST[unique_id]', '$_POST[parent_id]', '$_POST[cat_name]', '$_POST[keywords]', '$_POST[description]', '$_POST[sort]')";
-    $dou->query($sql);
+    $data = array(
+            'unique_id' => $_POST['unique_id'],
+            'parent_id' => $_POST['parent_id'],
+            'cat_name' => $_POST['cat_name'],
+            'keywords' => $_POST['keywords'],
+            'description' => $_POST['description'],
+            'sort' => $_POST['sort'],
+        );
+    $res = $dou->insert('case_category',$data);
     
     $dou->create_admin_log($_LANG['case_category_add'] . ': ' . $_POST['cat_name']);
     $dou->dou_msg($_LANG['case_category_add_succes'], 'case_category.php');
@@ -93,7 +87,7 @@ elseif ($rec == 'edit') {
     // 获取分类信息
     $cat_id = $check->is_number($_REQUEST['cat_id']) ? $_REQUEST['cat_id'] : '';
     $query = $dou->select($dou->table('case_category'), '*', '`cat_id` = \'' . $cat_id . '\'');
-    $cat_info = $dou->fetch_array($query);
+    $cat_info = $dou->fetch_assoc($query);
     
     // CSRF防御令牌生成
     $smarty->assign('token', $firewall->get_token());
@@ -114,9 +108,16 @@ elseif ($rec == 'update') {
         
     // CSRF防御令牌验证
     $firewall->check_token($_POST['token']);
-    
-    $sql = "update " . $dou->table('case_category') . " SET cat_name = '$_POST[cat_name]', unique_id = '$_POST[unique_id]', parent_id = '$_POST[parent_id]', keywords = '$_POST[keywords]' ,description = '$_POST[description]', sort = '$_POST[sort]' WHERE cat_id = '$_POST[cat_id]'";
-    $dou->query($sql);
+
+    $data = array(
+            'unique_id' => $_POST['unique_id'],
+            'parent_id' => $_POST['parent_id'],
+            'cat_name' => $_POST['cat_name'],
+            'keywords' => $_POST['keywords'],
+            'description' => $_POST['description'],
+            'sort' => $_POST['sort'],
+        );
+    $res = $dou->update('case_category',$data,"cat_id = '$_POST[cat_id]'");
     
     $dou->create_admin_log($_LANG['case_category_edit'] . ': ' . $_POST['cat_name']);
     $dou->dou_msg($_LANG['case_category_edit_succes'], 'case_category.php');
@@ -128,19 +129,20 @@ elseif ($rec == 'update') {
  * +----------------------------------------------------------
  */
 elseif ($rec == 'del') {
-    $cat_id = $check->is_number($_REQUEST['cat_id']) ? $_REQUEST['cat_id'] : $dou->dou_msg($_LANG['illegal'], 'case_category.php');
-    $cat_name = $dou->get_one("SELECT cat_name FROM " . $dou->table('case_category') . " WHERE cat_id = '$cat_id'");
-    $is_parent = $dou->get_one("SELECT id FROM " . $dou->table('case') . " WHERE cat_id = '$cat_id'") . $dou->get_one("SELECT cat_id FROM " . $dou->table('case_category') . " WHERE parent_id = '$cat_id'");
+    // 查三次改成一次性查出
+    $cat_id = $check->is_number($_REQUEST['cat_id']) ? intval($_REQUEST['cat_id']) : $dou->dou_msg($_LANG['illegal'], 'article_category.php');
+    $cates = $dou->fetchRow(sprintf("SELECT b.id,a.cat_name,(SELECT cat_id FROM %s WHERE parent_id=%d) as cat_id FROM %s a JOIN %s b ON a.cat_id=b.cat_id WHERE a.cat_id=%d;",$dou->table('article_category'),$cat_id,$dou->table('article_category'),$dou->table('article'),$cat_id));
+    $is_parent = $cates['id'] . $cates['cat_id'];
     
     if ($is_parent) {
-        $_LANG['case_category_del_is_parent'] = preg_replace('/d%/Ums', $cat_name, $_LANG['case_category_del_is_parent']);
+        $_LANG['case_category_del_is_parent'] = preg_replace('/d%/Ums', $cates['cat_name'], $_LANG['case_category_del_is_parent']);
         $dou->dou_msg($_LANG['case_category_del_is_parent'], 'case_category.php', '', '3');
     } else {
         if (isset($_POST['confirm']) ? $_POST['confirm'] : '') {
-            $dou->create_admin_log($_LANG['case_category_del'] . ': ' . $cat_name);
+            $dou->create_admin_log($_LANG['case_category_del'] . ': ' . $cates['cat_name']);
             $dou->delete($dou->table('case_category'), "cat_id = $cat_id", 'case_category.php');
         } else {
-            $_LANG['del_check'] = preg_replace('/d%/Ums', $cat_name, $_LANG['del_check']);
+            $_LANG['del_check'] = preg_replace('/d%/Ums', $cates['cat_name'], $_LANG['del_check']);
             $dou->dou_msg($_LANG['del_check'], 'case_category.php', '', '30', "case_category.php?rec=del&cat_id=$cat_id");
         }
     }

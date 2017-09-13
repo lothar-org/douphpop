@@ -24,6 +24,7 @@ if (extension_loaded('Memcached')) {
 */
 class Memory
 {
+    // const host = '106.14.74.155';
     const host = 'localhost';
     const port = 11211;
     // public $mhost;// 可以不预先定义
@@ -46,6 +47,7 @@ class Memory
             //     die($this->error);
             // }
         } else {
+            // return '';
             throw new Exception('Memcache not exists ');
         }
     }

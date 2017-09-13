@@ -155,7 +155,7 @@ class Order {
      */
     function get_order_product($order_id) {
         /* 获取产品列表 */
-        $query = $GLOBALS['dou']->query("SELECT a.product_id,a.name,a.price,a.product_number,a.defined,b.image FROM " . $GLOBALS['dou']->table('order_product') . " as a LEFT JOIN ". $GLOBALS['dou']->table('product') ." ON a.product_id=b.id WHERE a.order_id='$order_id' ORDER BY a.id DESC");
+        $query = $GLOBALS['dou']->query("SELECT a.product_id,a.name,a.price,a.product_number,a.defined,b.image FROM " . $GLOBALS['dou']->table('order_product') . " as a LEFT JOIN ". $GLOBALS['dou']->table('product') ." as b ON a.product_id=b.id WHERE a.order_id='$order_id' ORDER BY a.id DESC");
         while ($row = $GLOBALS['dou']->fetch_assoc($query)) {
             // 格式化价格
             $row['price'] = $GLOBALS['dou']->price_format($row['price']);

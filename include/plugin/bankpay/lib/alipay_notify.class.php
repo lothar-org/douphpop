@@ -25,13 +25,13 @@ class AlipayNotify {
      * HTTP形式消息验证地址
      */
  var $http_verify_url = 'http://notify.alipay.com/trade/notify_query.do?';
- var $alipay_config;
+ var $p_config;
 
- function __construct($alipay_config){
-  $this->alipay_config = $alipay_config;
+ function __construct($p_config){
+  $this->p_config = $p_config;
  }
-    function AlipayNotify($alipay_config) {
-     $this->__construct($alipay_config);
+    function AlipayNotify($p_config) {
+     $this->__construct($p_config);
     }
     /**
      * 针对notify_url验证消息是否是支付宝发出的合法消息
@@ -124,9 +124,9 @@ class AlipayNotify {
   $prestr = createLinkstring($para_sort);
   
   $isSgin = false;
-  switch (strtoupper(trim($this->alipay_config['sign_type']))) {
+  switch (strtoupper(trim($this->p_config['sign_type']))) {
    case "MD5" :
-    $isSgin = md5Verify($prestr, $sign, $this->alipay_config['key']);
+    $isSgin = md5Verify($prestr, $sign, $this->p_config['key']);
     break;
    default :
     $isSgin = false;
@@ -145,8 +145,8 @@ class AlipayNotify {
      * false 请检查防火墙或者是服务器阻止端口问题以及验证时间是否超过一分钟
      */
  function getResponse($notify_id) {
-  $transport = strtolower(trim($this->alipay_config['transport']));
-  $partner = trim($this->alipay_config['partner']);
+  $transport = strtolower(trim($this->p_config['transport']));
+  $partner = trim($this->p_config['partner']);
   $veryfy_url = '';
   if($transport == 'https') {
    $veryfy_url = $this->https_verify_url;
@@ -155,7 +155,7 @@ class AlipayNotify {
    $veryfy_url = $this->http_verify_url;
   }
   $veryfy_url = $veryfy_url."partner=" . $partner . "&notify_id=" . $notify_id;
-  $responseTxt = getHttpResponseGET($veryfy_url, $this->alipay_config['cacert']);
+  $responseTxt = getHttpResponseGET($veryfy_url, $this->p_config['cacert']);
   
   return $responseTxt;
  }

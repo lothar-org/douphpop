@@ -10,7 +10,9 @@
 if ($_SESSION[DOU_ID]) {
     $gUid = $_SESSION[DOU_ID]['user_id'];
     if ($gUid) {
-        $gUinfos = $dou->fetchRow(sprintf('SELECT * from %s where user_id=%d',$dou->table('user'),$gUid));
+        // $gUinfos = $dou->fetchRow(sprintf('SELECT * from %s where user_id=%d',$dou->table('user'),$gUid));
+        $gUinfos = $dou_user->get_user_info($_USER['user_id']);
+        // $smarty->assign('gUinfos',$gUinfos);
     }
 }
 
@@ -19,10 +21,16 @@ if ($_SESSION[DOU_ID]) {
 
 
 
-// $dou->debug($nav_product);
+
 // $dou->debug($countrys);
+// $dou->debug($gUinfos);
+
+// $dou->debug($dou->send_msg('18715511536'));
+// $dou->dou_msg('test this msg');
+// $dou->popup('kill');
 
 // $dou->debug(ROOT_PATH,1);
+// echo ROOT_URL;die;
 // $dou->debug($_CFG);
 // $dou->debug($GLOBALS['_CFG']);
 // $dou->debug($_LANG);

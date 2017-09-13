@@ -273,7 +273,7 @@ class Common extends DbMysql {
         $sql = "SELECT * FROM " . $this->table('link') . " ORDER BY sort ASC, id ASC";
         $query = $this->query($sql);
         while ($row = $this->fetch_array($query)) {
-            $link_list[] = array (
+            $link_list[] = array(
                     "id" => $row['id'],
                     "link_name" => $row['link_name'],
                     "link_url" => $row['link_url'],
@@ -370,7 +370,7 @@ class Common extends DbMysql {
         
         $sql = "SELECT * FROM " . $this->table($module) . $where . " ORDER BY " . $sort . "id DESC" . $limit;
         $query = $this->query($sql);
-        while ($row = $this->fetch_array($query)) {
+        while ($row = $this->fetch_assoc($query)) {
             $item['id'] = $row['id'];
             if ($row['title']) $item['title'] = $row['title'];
             if ($row['name']) $item['name'] = $row['name'];
@@ -574,7 +574,7 @@ class Common extends DbMysql {
      * $get 地址栏中额外参数传递 &var=v             || $jumpext
      * $close_rewrite 强制关闭伪静态
      * $join 联表
-     * $sep 分页符 'page'
+     * $sep 分页符 'page'，用于多分页
      * +----------------------------------------------------------
      */
     function pager($table, $page_size=10, $page, $page_url='', $where='', $get='', $join='', $close_rewrite=false, $sep='page') {
@@ -611,7 +611,8 @@ class Common extends DbMysql {
             }
         }
         // 当前页
-        $current = "<a href=\"".$spt.$page.$get."\">".$page."</a>";
+        // $current = "<a href=\''.$spt.$page.$get."\">".$page."</a>";
+        $current = '<span class="active">'.$page.'</span>';
         // 下三页
         for ($i=$page+1; $i < $page+5; $i++) { 
             if ($i <= $page_count) {
@@ -891,20 +892,22 @@ class Common extends DbMysql {
      * +----------------------------------------------------------
      * $str 要处理的内容
      * $length 要保留的长度
+     * $clear_space 判断是否清除空格
+     * $dot 省略号
      * $charset 要处理的内容的编码，一般情况无需设置
      * +----------------------------------------------------------
      */
     function dou_substr($str, $length, $clear_space=true, $dot='……', $charset=DOU_CHARSET) {
         $str = trim($str); // 清除字符串两边的空格
-        $str = strip_tags($str, ""); // 利用php自带的函数清除html格式
-        $str = preg_replace("/\r\n/", "", $str);
-        $str = preg_replace("/\r/", "", $str);
-        $str = preg_replace("/\n/", "", $str);
+        $str = strip_tags($str, ''); // 利用php自带的函数清除html格式
+        $str = preg_replace("/\r\n/", '', $str);
+        $str = preg_replace("/\r/", '', $str);
+        $str = preg_replace("/\n/", '', $str);
         // 判断是否清除空格
         if ($clear_space) {
-            $str = preg_replace("/\t/", "", $str);
-            $str = preg_replace("/ /", "", $str);
-            $str = preg_replace("/&nbsp;/", "", $str); // 匹配html中的空格
+            $str = preg_replace("/\t/", '', $str);
+            $str = preg_replace("/ /", '', $str);
+            $str = preg_replace("/&nbsp;/", '', $str); // 匹配html中的空格
         }
         $str = trim($str); // 清除字符串两边的空格
         
@@ -914,7 +917,7 @@ class Common extends DbMysql {
             $c['utf-8'] = "/[\x01-\x7f]|[\xc2-\xdf][\x80-\xbf]|[\xe0-\xef][\x80-\xbf]{2}|[\xf0-\xff][\x80-\xbf]{3}/";
             $c['gbk'] = "/[\x01-\x7f]|[\x81-\xfe][\x40-\xfe]/";
             preg_match_all($c[$charset], $str, $match);
-            $substr = join("", array_slice($match[0], 0, $length));
+            $substr = join('', array_slice($match[0], 0, $length));
         }
         return $substr . (strlen($str)>$length?$dot:'');
     }
@@ -1150,7 +1153,7 @@ class Common extends DbMysql {
         } else {
             if (is_string($var)) {
                 echo $var.'<br>';
-            } elseif (is_object()) {
+            } elseif (is_object($var)) {
                 echo '<pre>';var_dump($var);
             } elseif (is_array($var)) {
                 echo '<pre>';print_r($var);
