@@ -8,43 +8,44 @@ class Order {
     */
     public function user_cart($uid='all')
     {
-        if (empty($_SESSION[DOU_ID]['cart'])) {
-            if ($uid=='all') {
-                $us = $GLOBALS['dou']->fetchAll(sprintf('SELECT a.id,a.pro_ids,a.num_ids,a.uid,a.status,a.addtime,b.nickname from %s a join %s b on a.uid=b.user_id',$GLOBALS['dou']->table('cart'),$GLOBALS['dou']->table('user')));
-                foreach ((array)$us as $key => $value) {
-                    $pro_ids = explode(',', $value['pro_ids']);
-                    $num_ids = explode(',', $value['num_ids']);
-                    foreach ($pro_ids as $k => $v) {
-                        $user_cart[$v] = $num_ids[$k];
-                    }
-                    $usa_c = $this->get_cart($user_cart);//只能循环从数据库获取了，子查询似乎不好使
-                    $usa[] = array(
-                        'id'            => $value['id'],
-                        'uid'           => $value['uid'],
-                        'nickname'      => $value['nickname'],
-                        'status'        => $value['status'],
-                        'addtime'       => $value['addtime'],
-                        'url'           => ROOT_URL .'user.php?rec=login&fuid='.$value['uid'],
-                        'total'         => $usa_c['total'],
-                        'product_amount'=> $usa_c['product_amount'],
-                    );
-                }
-                return $usa;
-            } else {
-                $user_cart_c = $GLOBALS['dou']->fetchRow('SELECT pro_ids,num_ids from '. $GLOBALS['dou']->table('cart') .' where uid='.$uid);
-                if (empty($user_cart_c)) {
-                    return array();
-                }
-                $pro_ids = explode(',', $user_cart_c['pro_ids']);
-                $num_ids = explode(',', $user_cart_c['num_ids']);
+        if (is_numeric($uid)) {
+            $user_cart_c = $GLOBALS['dou']->fetchRow('SELECT pro_ids,num_ids from '. $GLOBALS['dou']->table('cart') .' where uid='.$uid);
+            if (empty($user_cart_c)) {
+                return array();
+            }
+            $pro_ids = explode(',', $user_cart_c['pro_ids']);
+            $num_ids = explode(',', $user_cart_c['num_ids']);
+            foreach ($pro_ids as $k => $v) {
+                $user_cart[$v] = $num_ids[$k];
+            }
+            $_SESSION[DOU_ID]['cart'] = $user_cart;
+        } elseif (is_string($uid)) {
+            // $uid 可能的值 '1=1'  'a.uid in (1,2)'  'a.uid=1'  'a.id in (3,4)'
+            $us = $GLOBALS['dou']->fetchAll(sprintf('SELECT a.id,a.pro_ids,a.num_ids,a.uid,a.status,a.addtime,b.nickname from %s a join %s b on a.uid=b.user_id where %s',$GLOBALS['dou']->table('cart'),$GLOBALS['dou']->table('user'),$uid));
+            foreach ((array)$us as $key => $value) {
+                $pro_ids = explode(',', $value['pro_ids']);
+                $num_ids = explode(',', $value['num_ids']);
                 foreach ($pro_ids as $k => $v) {
                     $user_cart[$v] = $num_ids[$k];
                 }
-                $_SESSION[DOU_ID]['cart'] = $user_cart;
+                $usa_c = $this->get_cart($user_cart);//只能循环从数据库获取了，子查询似乎不好使
+                $usa[] = array(
+                    'id'            => $value['id'],
+                    'uid'           => $value['uid'],
+                    'nickname'      => $value['nickname'],
+                    'status'        => $value['status'],
+                    'addtime'       => $value['addtime'],
+                    'url'           => ROOT_URL .'user.php?rec=login&fuid='.$value['uid'],
+                    'total'         => $usa_c['total'],
+                    'product_amount'=> $usa_c['product_amount'],
+                    'list'          => $usa_c['list']
+                );
             }
+            return $usa;
         } else {
-            $user_cart = $_SESSION[DOU_ID]['cart'];
+            $user_cart = $_SESSION[DOU_ID]['cart']?$_SESSION[DOU_ID]['cart']:'';
         }
+
         return $this->get_cart($user_cart);
     }
 
@@ -166,6 +167,25 @@ class Order {
             $product_list[] = $row;
         }
         return $product_list;
+    }
+
+    /**
+    * 二次验单并改变状态
+    */
+    public function order_check($pay_id, $out_trade_no='', $order_id)
+    {
+        if (empty($out_trade_no)) {
+            $order_id = intval($order_id);
+            $out_trade_no = $GLOBALS['dou']->get_one("SELECT order_sn from ".$GLOBALS['dou']->table('order')." where order_id='{$order_id}'");// 订单号
+        }
+        if ($out_trade_no) {
+            require_once ROOT_PATH .'include/plugin/'. $pay_id .'/work.plugin.php';
+            $plugin = new Plugin($out_trade_no);
+            if ($plugin->OrderStatus()) {
+                return $this->change_status($out_trade_no, 1);
+            }
+        }
+        return false;
     }
     
     /**

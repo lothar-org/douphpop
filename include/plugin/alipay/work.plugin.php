@@ -81,6 +81,40 @@ class Plugin {
 
     /**
      * +----------------------------------------------------------
+     * 查询订单
+     * +----------------------------------------------------------
+    */
+    function OrderStatus() {
+        // require_once(ROOT_PATH . 'include/plugin/' . $this->plugin_id . '/notify_url.php');
+        // require_once(ROOT_PATH . 'include/plugin/' . $this->plugin_id . '/lib/alipay_notify.class.php');
+
+        // 获取插件配置信息
+        $plugin = $GLOBALS['dou']->get_plugin($this->plugin_id);
+        $parameter['service']           = 'single_trade_query';
+        $parameter['partner']           = $plugin['config']['partner'];// 合作者ID
+        $parameter['_input_charset']    = strtolower('utf-8');
+        $parameter['out_trade_no']      = $this->order_sn;//商户订单号,唯一
+        ksort($parameter);
+        reset($parameter);
+         
+        $param = '';
+        $sign  = '';
+         
+        foreach ($parameter AS $key => $val)
+        {
+            $param .= "$key=" .urlencode($val). "&";
+            $sign  .= "$key=$val&";
+        }
+             
+        $param = substr($param, 0, -1);
+        $sign  = substr($sign, 0, -1) . $plugin['config']['key'];
+        $url = 'https://mapi.alipay.com/gateway.do?'.$param. '&sign='.md5($sign).'&sign_type=MD5';
+        echo file_get_contents($url);
+
+    }
+
+    /**
+     * +----------------------------------------------------------
      * 配置信息
      * +----------------------------------------------------------
      */
@@ -162,7 +196,7 @@ class Plugin {
         $parameter['exter_invoke_ip'] = "";
         
         // 字符编码格式 目前支持 gbk 或 utf-8
-        $parameter['_input_charset'] = trim(strtolower(strtolower('utf-8')));
+        $parameter['_input_charset'] = strtolower('utf-8');
 
         return $parameter;
     }

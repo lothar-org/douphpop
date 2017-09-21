@@ -48,9 +48,9 @@ if($verify_result) {//验证成功
 
 
     if($_POST['trade_status'] == 'TRADE_FINISHED') {
-        $dou_order->change_status($out_trade_no, 1);
+        $dou_order->change_status($out_trade_no, 10);
     } else if ($_POST['trade_status'] == 'TRADE_SUCCESS') {
-        $dou_order->change_status($out_trade_no, 1);
+        $dou_order->change_status($out_trade_no, 10);
     }
 
     //——请根据您的业务逻辑来编写程序（以上代码仅作参考）——

@@ -13,7 +13,6 @@
  * 该页面可以使用PHP开发工具调试，也可以使用写文本函数logResult，该函数已被默认关闭，见alipay_notify_class.php中的函数verifyReturn
  */
 define('IN_LOTHAR', true);
-
 require ('../../init.php');
 
 // 引入和实例化订单功能
@@ -25,12 +24,7 @@ require_once("work.plugin.php");
 $plugin = new Plugin();
 
 require_once("lib/alipay_notify.class.php");
-?>
-<!DOCTYPE HTML>
-<html>
-<head>
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-<?php
+
 //计算得出通知验证结果
 $alipayNotify = new AlipayNotify($plugin->p_config());
 $verify_result = $alipayNotify->verifyReturn();
@@ -53,19 +47,24 @@ if ($verify_result) {//验证成功
     if($_GET['trade_status'] == 'TRADE_FINISHED' || $_GET['trade_status'] == 'TRADE_SUCCESS') {
         $dou_order->change_status($out_trade_no, 1);
     } else {
-        echo "trade_status=".$_GET['trade_status'];
+        // echo "trade_status=".$_GET['trade_status'];
     }
   
     $dou->dou_header($_URL['order_list']);
+    // $dou->dou_header(ROOT_HOST .'/user.php?rec=order_list');
 
     //——请根据您的业务逻辑来编写程序（以上代码仅作参考）——
 }
 else {
     //验证失败
     //如要调试，请看alipay_notify.php页面的verifyReturn函数
-    $dou->dou_header(ROOT_URL);
+    $dou->dou_header($_URL['order_list']);
 }
 ?>
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 <title>支付宝即时到账交易接口</title>
 </head>
 <body>

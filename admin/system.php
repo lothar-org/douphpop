@@ -1,6 +1,6 @@
 <?php
 define('IN_LOTHAR', true);
-
+define('CMOD', 'system');
 require (dirname(__FILE__) . '/include/init.php');
 include_once (ROOT_PATH . 'include/upload.class.php');
 
@@ -8,7 +8,7 @@ include_once (ROOT_PATH . 'include/upload.class.php');
 $rec = $check->is_rec($_REQUEST['rec']) ? $_REQUEST['rec'] : 'default';
 
 // 赋值给模板
-$smarty->assign('cur', 'system');
+$smarty->assign('cur', CMOD);
 
 /**
  * +----------------------------------------------------------

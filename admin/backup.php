@@ -1,18 +1,6 @@
 <?php
-/**
- * WincomtechPHP
- * --------------------------------------------------------------------------------------------------
- * 版权所有 2013-2035 XXX网络科技有限公司，并保留所有权利。
- * 网站地址: http://www.wowlothar.cn
- * --------------------------------------------------------------------------------------------------
- * 这不是一个自由软件！您只能在遵守授权协议前提下对程序代码进行修改和使用；不允许对程序代码以任何形式任何目的的再发布。
- * 授权协议：http://www.wowlothar.cn/license.html
- * --------------------------------------------------------------------------------------------------
- * Author: Lothar
- * Release Date: 2015-10-16
- */
 define('IN_LOTHAR', true);
-
+define('CMOD', 'backup');
 require (dirname(__FILE__) . '/include/init.php');
 require (ROOT_PATH . ADMIN_PATH . '/include/backup.class.php');
 
@@ -22,11 +10,11 @@ $rec = $check->is_rec($_REQUEST['rec']) ? $_REQUEST['rec'] : 'default';
 // 初始化
 $sqlcharset = str_replace('-', '', DOU_CHARSET);
 $backup = new Backup($sqlcharset);
-@ set_time_limit(0);
+@set_time_limit(0);
 
 // 赋值给模板
 $smarty->assign('rec', $rec);
-$smarty->assign('cur', 'backup');
+$smarty->assign('cur', CMOD);
 
 /**
  * +----------------------------------------------------------
@@ -37,32 +25,32 @@ if ($rec == 'default') {
     $smarty->assign('ur_here', $_LANG['backup']);
     $smarty->assign('action_link', array(
             'text' => $_LANG['backup_restore'],
-            'href' => 'backup.php?rec=restore' 
+            'href' => 'backup.php?rec=restore'
     ));
-    
+
     $query = $dou->query("SHOW TABLE STATUS LIKE '" . $prefix . "%'");
     while ($table = $dou->fetch_array($query)) {
         $table['checked'] = $table['Engine'] == 'MyISAM' ? ' ' : 'disabled';
         $totalsize += $table['Data_length'] + $table['Index_length'];
-        
+
         if ($table['Data_length'] > 10240) {
             $table['Data_length'] = ceil($table['Data_length'] / 1024) . "KB";
         }
         $tables[] = $table;
     }
     $totalsize = ceil($totalsize / 1024);
-    
+
     // 根据时间生成备份文件名
     $file_name = 'D' . date('Ymd') . 'T' . date('His');
-    
+
     // CSRF防御令牌生成
     $smarty->assign('token', $firewall->get_token());
-    
+
     // 初始化数据
     $smarty->assign('tables', $tables);
     $smarty->assign('totalsize', $totalsize);
     $smarty->assign('file_name', $file_name);
-    
+
     $smarty->display('backup.htm');
 }
 
@@ -77,13 +65,13 @@ if ($rec == 'backup') {
     $vol_size = $_REQUEST['vol_size']; // 每个分卷文件大小
     $totalsize = $_REQUEST['totalsize']; // 所选数据库大小
     $file_name = $_REQUEST['file_name']; // 备份文件名
-    
+
     // 判断备份文件名是否规范
     if (!$backup->is_backup_file($file_name . '.sql'))
         $dou->dou_msg($_LANG['backup_file_name_not_valid'], 'backup.php');
-        
+
     // CSRF防御令牌验证
-    
+
     if ($fileid==1 && $tables) {
         if (!isset($tables) || !is_array($tables)) {
             $dou->dou_msg($_LANG['backup_no_select'], 'backup.php');
@@ -100,44 +88,44 @@ if ($rec == 'backup') {
             $dou->dou_msg($_LANG['backup_no_select'], 'backup.php');
         }
     }
-    
+
     if ($dou->version() > '4.1' && $sqlcharset) {
         $dou->query("SET NAMES '" . $sqlcharset . "';\n\n");
     }
-    
+
     $sqldump = '';
     $tableid = isset($_REQUEST['tableid']) ? $_REQUEST['tableid'] - 1 : 0;
     $startfrom = isset($_REQUEST['startfrom']) ? intval($_REQUEST['startfrom']) : 0;
     $tablenumber = count($tables);
-    
+
     for($i = $tableid; $i < $tablenumber && strlen($sqldump) < $vol_size * 1024; $i++) {
         $sqldump .= $backup->sql_dumptable($tables[$i], $vol_size, $startfrom, strlen($sqldump));
         $startfrom = 0;
     }
-    
+
     if (trim($sqldump)) {
         $sqldump = "-- DouPHP v1.x SQL Dump Program\n" . "-- " . ROOT_URL . "\n" . "-- \n" . "-- DATE : " . date('Y-m-d H:i:s') . "\n" . "-- MYSQL SERVER VERSION : " . $dou->version() . "\n" . "-- PHP VERSION : " . PHP_VERSION . "\n" . "-- DouPHP VERSION : " . $_CFG['douphp_version'] . "\n\n" . $sqldump;
-        
+
         $tableid = $i;
-        
+
         if ($vol_size > $totalsize) {
             $sql_file_name = $file_name . '.sql';
         } else {
             $sql_file_name = $file_name . '_' . $fileid . '.sql';
         }
-        
+
         $fileid++;
-        
+
         $bakfile = ROOT_PATH . '/data/backup/' . $sql_file_name;
-        
+
         if (!is_writable(ROOT_PATH . '/data/backup/'))
             $dou->dou_msg($_LANG['backup_no_save'], 'backup.php');
-        
+
         file_put_contents($bakfile, $sqldump);
         @ chmod($bakfile, 0777);
-        
+
         $dou->create_admin_log($_LANG['backup'] . ': ' . $sql_file_name);
-        
+
         $_LANG['backup_file_success'] = preg_replace('/d%/Ums', $sql_file_name, $_LANG['backup_file_success']);
         $dou->dou_msg($_LANG['backup_file_success'], 'backup.php?rec=' . $rec . '&vol_size=' . $vol_size . '&totalsize=' . $totalsize . '&file_name=' . $file_name . '&token=' . $_REQUEST['token'] . '&tableid=' . $tableid . '&fileid=' . $fileid . '&startfrom=' . $startrow, '', 1);
     } else {
@@ -155,11 +143,11 @@ if ($rec == 'restore') {
     $smarty->assign('ur_here', $_LANG['backup_restore']);
     $smarty->assign('action_link', array(
             'text' => $_LANG['backup'],
-            'href' => 'backup.php' 
+            'href' => 'backup.php'
     ));
-    
+
     $sqlfiles = glob(ROOT_PATH . 'data/backup/*.sql');
-    
+
     if (is_array($sqlfiles)) {
         $prepre = '';
         $info = $infos = array();
@@ -172,7 +160,7 @@ if ($rec == 'restore') {
                     $info['filesize'] = round(filesize($sqlfile) / (1024 * 1024), 2) . "M";
                 }
                 $info['maketime'] = date('Y-m-d H:i:s', filemtime($sqlfile));
-                
+
                 if (preg_match('/_([0-9])+\.sql$/', $sql_file_name, $match)) {
                     $info['number'] = $match[1];
                 } else {
@@ -184,7 +172,7 @@ if ($rec == 'restore') {
         }
         $smarty->assign('infos', $infos);
     }
-    
+
     $smarty->display('backup.htm');
 }
 
@@ -196,27 +184,27 @@ if ($rec == 'restore') {
 if ($rec == 'import') {
     // 验证并获取合法的备份文件名
     $sql_file_name = $backup->is_backup_file($_REQUEST['sql_file_name']) ? $_REQUEST['sql_file_name'] : $dou->dou_msg($_LANG['backup_file_name_not_valid'], 'backup.php');
-    
+
     // 判断备份文件名是否是分卷的格式
     preg_match('/(.*)_([0-9])+\.sql$/', $sql_file_name, $match);
-    
+
     // 判断是否有分卷
     if ($match) {
         $fileid = $_REQUEST['fileid'] ? $_REQUEST['fileid'] : 1;
         $sql_file_name = $match['1'] . "_" . $fileid . ".sql";
     }
-    
+
     $restore_now = preg_replace('/d%/Ums', $sql_file_name, $_LANG['backup_restore_now']);
-    
+
     $file_path = ROOT_PATH . 'data/backup/' . $sql_file_name;
-    
+
     // 判断是否有分卷
     if ($match) {
         // 判断SQL文件是否存在
         if (file_exists($file_path)) {
             $sql = file_get_contents($file_path);
             $dou->fn_execute($sql);
-            
+
             $fileid++;
             $dou->dou_msg($restore_now, "backup.php?rec=" . $rec . "&sql_file_name=" . $sql_file_name . "&fileid=" . $fileid);
         } else {
@@ -227,7 +215,7 @@ if ($rec == 'import') {
     } else {
         $sql = file_get_contents($file_path);
         $dou->fn_execute($sql);
-        
+
         $dou->create_admin_log($_LANG['backup_restore'] . ': ' . $sql_file_name);
         $dou->dou_msg($_LANG['backup_restore_success'], 'backup.php?rec=restore');
     }
@@ -241,29 +229,29 @@ if ($rec == 'import') {
 if ($rec == 'del') {
     // 验证并获取合法的备份文件名
     $sql_file_name = $backup->is_backup_file($_REQUEST['sql_file_name']) ? $_REQUEST['sql_file_name'] : $dou->dou_msg($_LANG['backup_file_name_not_valid'], 'backup.php');
-    
+
     if (isset($_POST['confirm']) ? $_POST['confirm'] : '') {
         if (file_exists(ROOT_PATH . 'data/backup/' . $sql_file_name)) {
             @unlink(ROOT_PATH . 'data/backup/' . $sql_file_name);
         }
-        
+
         preg_match('/(.*)_([0-9])+\.sql$/', $sql_file_name, $match);
-        
+
         // 如果存在分卷则将分卷删除
         if ($match) {
             $sqlfiles = glob(ROOT_PATH . 'data/backup/' . $match['1'] . '_*.sql');
-            
+
             $sql_file_name .= ' ' . $_LANG['backup_vol_include'] . ' : ';
-            
+
             foreach ($sqlfiles as $id => $sqlfile) {
                 if (file_exists(ROOT_PATH . 'data/backup/' . basename($sqlfile))) {
                     @unlink(ROOT_PATH . 'data/backup/' . basename($sqlfile));
                 }
-                
+
                 $sql_file_name .= basename($sqlfile) . ',';
             }
         }
-        
+
         $dou->create_admin_log($_LANG['backup_del'] . ': ' . $sql_file_name);
         $dou->dou_msg(preg_replace('/d%/Ums', $sql_file_name, $_LANG['backup_del_success']), 'backup.php?rec=restore');
     } else {
@@ -280,7 +268,7 @@ if ($rec == 'del') {
 if ($rec == 'down') {
     // 验证并获取合法的备份文件名
     $sql_file_name = $backup->is_backup_file($_REQUEST['sql_file_name']) ? $_REQUEST['sql_file_name'] : $dou->dou_msg($_LANG['backup_file_name_not_valid'], 'backup.php');
-    
+
     ob_clean();
     if ($fp = @ fopen(ROOT_PATH . 'data/backup/' . $sql_file_name, 'r')) {
         header("Content-type: application/zip");

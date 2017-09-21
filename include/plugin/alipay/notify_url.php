@@ -49,7 +49,7 @@ if($verify_result) {//验证成功
 
     if($_POST['trade_status'] == 'TRADE_FINISHED') {
         $dou_order->change_status($out_trade_no, 1);
-    } else if ($_POST['trade_status'] == 'TRADE_SUCCESS') {
+    } elseif ($_POST['trade_status'] == 'TRADE_SUCCESS') {
         $dou_order->change_status($out_trade_no, 1);
     }
 

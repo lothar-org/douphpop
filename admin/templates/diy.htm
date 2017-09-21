@@ -36,29 +36,7 @@
      <input name="keyword" type="text" class="inpMain" value="{$keyword}" size="20" />
      <input name="submit" class="btnGray" type="submit" value="{$lang.btn_filter}" />
     </form>
-    <span>
-    <!--{if $if_sort}-->
-    <a class="btnGray" href="diy.php?rec=sort">{$lang.sort_close}</a>
-    <!--{else}-->
-    <a class="btnGray" href="diy.php?rec=sort">{$lang.sort_diy}</a>
-    <!--{/if}-->
-    </span>
     </div>
-    <!--{if $if_sort}-->
-    <div class="homeSortRight">
-     <ul class="homeSortBg">
-      {$sort_bg}
-     </ul>
-     <ul class="homeSortList">
-      <!--{foreach from=$sort name=sort item=diy}-->
-      <li>
-       <em>{$diy.title}</em>
-       <a href="diy.php?rec=del_sort&id={$diy.id}" title="{$lang.sort_cancel}">X</a>
-      </li>
-      <!--{/foreach}-->
-     </ul>
-    </div>
-    <!--{/if}-->
     <div id="list"{if $if_sort} class="homeSortLeft"{/if}>
     <form name="action" method="post" action="diy.php?rec=action">
     <table width="100%" border="0" cellpadding="8" cellspacing="0" class="tableBasic">
@@ -80,11 +58,7 @@
       <td align="center"><!--{if $diy.cat_name}--><a href="diy.php?cat_id={$diy.cat_id}">{$diy.cat_name}</a><!--{else}-->{$lang.uncategorized}<!--{/if}--></td>
       <td align="center">{$diy.add_time}</td>
       <td align="center">
-       <!--{if $if_sort}-->
-       <a href="diy.php?rec=set_sort&id={$diy.id}">{$lang.sort_btn}</a>
-       <!--{else}-->
        <a href="diy.php?rec=edit&id={$diy.id}">{$lang.edit}</a> | <a href="diy.php?rec=del&id={$diy.id}">{$lang.del}</a>
-       <!--{/if}-->
       </td>
      </tr>
      <!--{/foreach}-->

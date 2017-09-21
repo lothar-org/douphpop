@@ -35,6 +35,10 @@ require (ROOT_PATH . 'include/memory.class.php');
 // 实例化DouPHP核心类
 $dou = new Action($dbhost, $dbuser, $dbpass, $dbname, $prefix, DOU_CHARSET);
 $rbac = new RBAC();
+// 权限判断
+if (CMOD) {
+    // $rbac->access_jump(CMOD,$_USER);
+}
 $check = new Check();
 $firewall = new Firewall();
 $memory = new Memory();

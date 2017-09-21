@@ -20,7 +20,7 @@ $_LANG['click'] = 'Click';
 $_LANG['price'] = 'Price';
 $_LANG['price_format'] = 'USD $ d%';
 $_LANG['price_discuss'] = 'Negotiable';
-$_LANG['copyright'] = '© d% 2017 All Rights Reserved.';
+$_LANG['copyright'] = '© d% All Rights Reserved.';
 $_LANG['powered_by'] = "<a href='http://www.wowlothar.cn' target='_blank'>Powered by WincomtechPHP</a>";
 $_LANG['home'] = 'Home';
 $_LANG['add_favorite'] = 'Add To Favorites';

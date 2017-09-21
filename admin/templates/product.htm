@@ -104,8 +104,8 @@
     </div>
     </form>
     </div>
-    <div class="clear"></div>
     {include file="pager.htm"}
+    <div class="clear"></div>
     <!--{/if}-->
     <!--{if $rec eq 'add' || $rec eq 'edit'} 商品添加或编辑 -->
     <h3><a href="{$action_link.href}" class="actionBtn">{$action_link.text}</a>{$ur_here}</h3>
@@ -120,7 +120,7 @@
       <tr>
        <td align="right">{$lang.product_category}</td>
        <td>
-        <select name="cat_id">
+        <select name="cat_id" onchange="dgLink(this,{$product.id})">
          <option value="0">{$lang.uncategorized}</option>
          <!--{foreach from=$product_category item=cate}-->
          <!--{if $cate.cat_id eq $product.cat_id}-->
@@ -238,6 +238,18 @@ function douAction()
 {/literal}
 </script>
 <!--{/if}-->
+
+<!-- {if $rec eq 'add' || $rec eq 'edit'} -->
+<script type="text/javascript">
+var frm = 'product.php?rec={$rec}';
+{literal}
+function dgLink(o,id) {
+  window.location=frm+'&cat_id='+o.value+'&id='+id;
+}
+{/literal}
+</script>
+<!-- {/if} -->
+
 <!--{if $rec neq 're_thumb'}-->
 </body>
 </html>

@@ -20,7 +20,7 @@ $_LANG['click'] = '点击数';
 $_LANG['price'] = '价格';
 $_LANG['price_format'] = '￥d% 元';
 $_LANG['price_discuss'] = '面议';
-$_LANG['copyright'] = '© d% 2017 All Rights Reserved.';
+$_LANG['copyright'] = '© d% All Rights Reserved.';
 $_LANG['powered_by'] = "<a href='http://www.wowlothar.cn' target='_blank'>Powered by WincomtechPHP</a>";
 $_LANG['add_favorite'] = '收藏本站';
 $_LANG['link'] = '友情链接';

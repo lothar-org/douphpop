@@ -2,6 +2,8 @@
 if (!defined('IN_LOTHAR')) die('Hacking attempt');
 // 显示除了E_NOTICE(提示)和E_WARNING(警告)外的所有错误
 error_reporting(E_ALL ^ (E_NOTICE | E_WARNING));
+// error_reporting(E_ERROR);
+// error_reporting(0);
 // 关闭 set_magic_quotes_runtime
 @set_magic_quotes_runtime(0);
 // 调整时区
@@ -36,7 +38,8 @@ require (ROOT_PATH . 'include/memory.class.php');
 // 定义DouPHP其它常量
 // DS 在 Smarty 里定义了
 // M_PATH \data\config.php
-define('M_URL', ROOT_URL . M_PATH . '/');
+// define('M_URL', ROOT_URL . M_PATH . '/');
+define('M_URL', ROOT_HOST .'/'. M_PATH . '/');
 
 // 实例化DouPHP核心类
 $dou = new Action($dbhost, $dbuser, $dbpass, $dbname, $prefix, DOU_CHARSET);
@@ -86,7 +89,7 @@ if (!defined('EXIT_INIT')) {
         echo "<meta http-equiv=\"Content-Type\" content=\"text/html; charset=". DOU_CHARSET ."\"><div style=\"margin: 200px; text-align: center; font-size: 14px\"><p>" . $_LANG['site_closed'] . "</p><p></p></div>";
         exit();
     }
-    $_LANG['copyright'] = preg_replace('/d%/Ums', $_CFG['site_name'], $_LANG['copyright']);
+    // $_LANG['copyright'] = preg_replace('/d%/Ums', $_CFG['site_name'].' 2017', $_LANG['copyright']);
 
     // 载入模块文件
     foreach ((array)$_MODULE['init'] as $init_file) {

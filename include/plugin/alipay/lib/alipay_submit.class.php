@@ -81,13 +81,13 @@ class AlipaySubmit {
     * @param $para_temp 请求参数数组
     * @param $method 提交方式。两个值可选：post、get
     * @param $button_name 确认按钮显示文字
-    * @return 提交表单HTML文本
+    * @return 提交表单HTML文本  target='_blank'在苹果机上失效
     */
     function buildRequestForm($para_temp, $method, $button_name) {
         //待请求参数数组
         $para = $this->buildRequestPara($para_temp);
 
-        $sHtml = "<form id='alipaysubmit' name='alipaysubmit' action='".$this->alipay_gateway_new."_input_charset=".trim(strtolower($this->p_config['input_charset']))."' method='".$method."' target='_blank'>";
+        $sHtml = "<form id='alipaysubmit' name='alipaysubmit' action='".$this->alipay_gateway_new."_input_charset=".trim(strtolower($this->p_config['input_charset']))."' method='".$method."'>";
         while (list($key,$val)=each($para)) {
             $sHtml.= "<input type='hidden' name='".$key."' value='".$val."'/>";
         }

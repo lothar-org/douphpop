@@ -1,18 +1,6 @@
 <?php
-/**
- * WincomtechPHP
- * --------------------------------------------------------------------------------------------------
- * 版权所有 2013-2035 XXX网络科技有限公司，并保留所有权利。
- * 网站地址: http://www.wowlothar.cn
- * --------------------------------------------------------------------------------------------------
- * 这不是一个自由软件！您只能在遵守授权协议前提下对程序代码进行修改和使用；不允许对程序代码以任何形式任何目的的再发布。
- * 授权协议：http://www.wowlothar.cn/license.html
- * --------------------------------------------------------------------------------------------------
- * Author: Lothar
- * Release Date: 2015-10-16
- */
 define('IN_LOTHAR', true);
-
+define('CMOD', 'module');
 // 载入语言文件
 require ('../languages/zh_cn/admin/module.lang.php');
 require (dirname(__FILE__) . '/include/init.php');
@@ -26,7 +14,7 @@ $cache_dir = ROOT_PATH . 'cache/';
 $dou_upload = new Upload($cache_dir, '', 'zip', 5120);
 
 $smarty->assign('rec', $rec);
-$smarty->assign('cur', 'module');
+$smarty->assign('cur', CMOD);
 
 /**
  * +----------------------------------------------------------
