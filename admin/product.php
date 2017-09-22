@@ -140,6 +140,8 @@ elseif ($rec == 'insert') {
         $image_name = $img->upload_image('image', $img->create_file_name('product'));
         $image = $images_dir . $image_name;
         $img->make_thumb($image_name, $_CFG['thumb_width'], $_CFG['thumb_height']);
+        // 第二张缩略图
+        // $img->make_thumb($image_name, $thumb['w2'], $thumb['h2'], '90', '2');
     }
 
     // 数据格式化
@@ -212,6 +214,8 @@ elseif ($rec == 'update') {
         $image_name = $img->upload_image('image', $img->create_file_name('product', $_POST['id'], 'image'));
         $image = $images_dir . $image_name;
         $img->make_thumb($image_name, $_CFG['thumb_width'], $_CFG['thumb_height']);
+        // 第二张缩略图
+        // $img->make_thumb($image_name, $thumb['w2'], $thumb['h2'], '90', '2');
         // 因为这里文件名始终相同，会直接覆盖源文件，所以不可以做额外删除
         // $old_pic = $dou->get_one("SELECT image from ".$dou->table('product')." where id='$_POST[id]' ");
         // if ($old_pic) { $dou->del_image($old_pic); }

@@ -8,7 +8,7 @@ class Upload {
     var $upfile_type; // 上传的类型，默认为：jpg gif png rar zip
     var $upfile_size_max; // 上传大小限制，单位是“KB”，默认为：2048KB
     var $to_file = true; // $this->to_file设定为false时将以原图文件名创建缩略图
-    
+
     /**
      * +----------------------------------------------------------
      * 构造函数
@@ -22,7 +22,7 @@ class Upload {
         $this->upfile_type = $upfile_type;
         $this->upfile_size_max = $upfile_size_max;
     }
-    
+
     /**
      * +----------------------------------------------------------
      * 图片上传的处理函数
@@ -35,11 +35,11 @@ class Upload {
         if ($GLOBALS['dou']->dir_status($this->images_dir) != 'write') {
             $GLOBALS['dou']->dou_msg($GLOBALS['_LANG']['upload_dir_wrong']);
         }
-        
+
         // 没有命名规则默认以时间作为文件名
         if (empty($image_name))
             $image_name = $GLOBALS['dou']->create_rand_string('n', 6, time()); // 设定当前时间为图片名称
-        
+
         if (@ empty($_FILES[$upfile]['name']))
             $GLOBALS['dou']->dou_msg($GLOBALS['_LANG']['upload_image_empty']);
 
@@ -80,12 +80,12 @@ class Upload {
             echo $GLOBALS['_LANG']['upload_dir_wrong'];
             exit;
         }
-        
+
         // 没有命名规则默认以时间作为文件名
         if (empty($image_name)) {
             $image_name = $GLOBALS['dou']->create_rand_string('n', 6, time()); // 设定当前时间为图片名称
         }
-        
+
         if (@ empty($_FILES[$upfile]['name'])) {
             echo $GLOBALS['_LANG']['upload_image_empty'];
             exit;
@@ -116,7 +116,7 @@ class Upload {
             echo $GLOBALS['_LANG']['upload_wrong'];
         }
     }
-    
+
     /**
      * +----------------------------------------------------------
      * 获取上传图片信息
@@ -134,7 +134,7 @@ class Upload {
         $img_info["ext"] = pathinfo($photo, PATHINFO_EXTENSION);
         return $img_info;
     }
-    
+
     /**
      * +----------------------------------------------------------
      * 创建图片的缩略图
@@ -143,12 +143,13 @@ class Upload {
      * $width 缩略图宽度
      * $height 缩略图高度
      * $quality 生成缩略图片质量
+     * $thumb_dir_ext 多张缩略图处理
      * +----------------------------------------------------------
-     */
-    function make_thumb($photo, $width = '128', $height = '128', $quality = '90') {
+    */
+    function make_thumb($photo, $width='128', $height='128', $quality='90', $thumb_dir_ext='') {
         $img_info = $this->get_img_info($photo);
         $photo = $this->images_dir . $photo; // 获得图片源
-        $thumb_name = substr($img_info["name"], 0, strrpos($img_info["name"], ".")) . "_thumb." . $img_info["ext"]; // 缩略图名称
+        $thumb_name = substr($img_info["name"], 0, strrpos($img_info["name"], ".")) . '_thumb'.$thumb_dir_ext.'.' . $img_info["ext"]; // 缩略图名称
         if ($img_info["type"] == 1) {
             $img = imagecreatefromgif($photo);
         } elseif ($img_info["type"] == 2) {
@@ -158,11 +159,11 @@ class Upload {
         } else {
             $img = "";
         }
-        
+
         if (empty($img)) {
             return False;
         }
-        
+
         if (function_exists("imagecreatetruecolor")) {
             $new_thumb = imagecreatetruecolor($width, $height);
             ImageCopyResampled($new_thumb, $img, 0, 0, 0, 0, $width, $height, $img_info["width"], $img_info["height"]);
@@ -170,7 +171,7 @@ class Upload {
             $new_thumb = imagecreate($width, $height);
             ImageCopyResized($new_thumb, $img, 0, 0, 0, 0, $width, $height, $img_info["width"], $img_info["height"]);
         }
-        
+
         // $this->to_file设定为false时将以原图文件名创建缩略图
         if ($this->to_file) {
             if (file_exists($this->images_dir . $this->thumb_dir . $thumb_name))
@@ -198,7 +199,7 @@ class Upload {
     {
         if ($field && $id)
             $file_name = $GLOBALS['dou']->get_file_name($GLOBALS['dou']->get_one("SELECT $field FROM " . $GLOBALS['dou']->table($module) . " WHERE id = '$id'"));
-            
+
         $item_id = $id ? $id : $GLOBALS['dou']->auto_id($module);
         return $file_name ? $file_name : $item_id . '_' . $GLOBALS['dou']->create_rand_string('n', 6, time());
     }
