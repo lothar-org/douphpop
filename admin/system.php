@@ -29,7 +29,7 @@ if ($rec == 'default') {
     $smarty->assign('cfg_list_defined', get_cfg_list('defined' ,$allow));
     if (file_exists(ROOT_PATH . "include/mail.class.php")) // 判断是否存在邮件模块
         $smarty->assign('cfg_list_mail', get_cfg_list('mail'));
-    
+
     $smarty->display('system.htm');
 }
 
@@ -42,7 +42,7 @@ if ($rec == 'update') {
     // 验证系统语言选择
     if (!preg_match("/^[a-z_]+$/", $_POST['language']))
         $dou->dou_msg($_LANG['language_wrong'], 'system.php');
-    
+
     // 上传图片生成
     if ($_FILES['site_logo']['name'] != '') {
         $logo_dir = ROOT_PATH . "theme/" . $_CFG['site_theme'] . "/sys/"; // logo上传路径,结尾加斜杠
@@ -50,16 +50,16 @@ if ($rec == 'update') {
         $upfile = $logo->upload_image('site_logo', 'logo'); // 上传的文件域
         $_POST['site_logo'] = $upfile;
     }
-    
+
     // CSRF防御令牌验证
     $firewall->check_token($_POST['token']);
-    
+
     foreach ($_POST as $name => $value) {
         if (is_array($value)) $value = serialize($value);
         $sql = "UPDATE " . $dou->table('config') . " SET value = '$value' WHERE name = '$name'";
         $dou->query($sql);
     }
-    
+
     $dou->create_admin_log($_LANG['system'] . ': ' . $_LANG['edit_succes']);
     $dou->dou_msg($_LANG['edit_succes'], 'system.php');
 }
@@ -76,15 +76,15 @@ function get_cfg_list($tab = 'main',$allow=array('ALL')) {
         // 预设选项
         if ($row['box'])
             $box = explode(",", $row['box']);
-        
+
         if ($row['name'] == 'site_logo')
-            $row['value'] = $row['value'] ? "theme/" . $GLOBALS['_CFG']['site_theme'] . "/images/" . $row['value'] : '';
-        
+            $row['value'] = $row['value'] ? "theme/" . $GLOBALS['_CFG']['site_theme'] . "/sys/" . $row['value'] : '';
+
         if ($row['name'] == 'language')
             $box = $GLOBALS['dou']->get_subdirs(ROOT_PATH . 'languages');
-        
+
         $cue = $GLOBALS['_LANG'][$row['name'] . '_cue'];
-        
+
         if ($row['name'] == 'rewrite') {
             // 根据 Web 服务器信息 判断伪静态文件
             if (stristr($_SERVER['SERVER_SOFTWARE'], "Apache")) {
@@ -106,7 +106,7 @@ function get_cfg_list($tab = 'main',$allow=array('ALL')) {
                 $cue = $GLOBALS['_LANG'][$row['name'] . '_cue_other'];
             }
         }
-        
+
         // 数组类型的设置选项
         if ($row['type'] == 'array') {
             $arr = unserialize($row['value']);
@@ -121,17 +121,17 @@ function get_cfg_list($tab = 'main',$allow=array('ALL')) {
                 }
             }
         }
-        
+
         $cfg_list[] = array(
                 "value" => $value_array ? $value_array : $row['value'],
                 "name" => $row['name'],
                 "type" => $row['type'],
                 "box" => $box,
                 "lang" => $GLOBALS['_LANG'][$row['name']],
-                "cue" => $cue 
+                "cue" => $cue
         );
     }
-    
+
     return $cfg_list;
 }
 ?>

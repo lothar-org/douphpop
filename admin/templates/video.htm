@@ -160,17 +160,20 @@
          <i class="clear"></i>
          <p class="cue">{$lang.video_file_cue}</p>
         </div>
-        <script type="text/javascript"><!--{literal}-->
-        $(document).ready(function(){
-         $('.ajaxupload').ajaxupload({<!--{/literal}-->
-           ststem_max_file_size: {php}echo ini_get('upload_max_filesize') * 1024{/php}, // 服务器限制的上传文件大小
-           <!--{if $video.filename}-->
-           filename: '{$video.filename}',
-           <!--{/if}-->
-           module: '{$cur}'
-         <!--{literal}-->});
-        })
-        <!--{/literal}--></script>
+        <script type="text/javascript">
+        var upload_max_filesize = '{$upload_max_filesize}', // 服务器限制的上传文件大小
+            filename = '{$video.filename}',
+            cur = '{$cur}';
+        {literal}
+          $(document).ready(function(){
+            $('.ajaxupload').ajaxupload({
+              ststem_max_file_size: upload_max_filesize,
+              filename: filename,
+              module: cur
+            });
+          })
+        {/literal}
+        </script>
         <!-- /ajaxupload -->
        </td>
       </tr>
@@ -229,15 +232,12 @@
 <!--{if $rec eq 'default'} 视频列表 -->
 <script type="text/javascript">
 {literal}
-onload = function()
-{
+onload = function(){
   document.forms['action'].reset();
 }
 
-function douAction()
-{
+function douAction(){
     var frm = document.forms['action'];
-
     frm.elements['new_cat_id'].style.display = frm.elements['action'].value == 'category_move' ? '' : 'none';
 }
 {/literal}

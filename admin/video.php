@@ -17,6 +17,8 @@ if (!file_exists(ROOT_PATH . $images_dir))
 $smarty->assign('rec', $rec);
 $smarty->assign('cur', CMOD);
 
+$smarty->assign('upload_max_filesize',ini_get('upload_max_filesize')*1024);
+
 /**
  * +----------------------------------------------------------
  * 视频列表
@@ -26,46 +28,46 @@ if ($rec == 'default') {
     $smarty->assign('ur_here', $_LANG['video']);
     $smarty->assign('action_link', array(
             'text' => $_LANG['video_add'],
-            'href' => 'video.php?rec=add' 
+            'href' => 'video.php?rec=add'
     ));
-    
+
     // 获取参数
     $cat_id = $check->is_number($_REQUEST['cat_id']) ? $_REQUEST['cat_id'] : 0;
     $keyword = isset($_REQUEST['keyword']) ? trim($_REQUEST['keyword']) : '';
-    
+
     // 筛选条件
     $where = ' WHERE cat_id IN (' . $cat_id . $dou->dou_child_id('video_category', $cat_id) . ')';
     if ($keyword) {
         $where = $where . " AND title LIKE '%$keyword%'";
         $get = '&keyword=' . $keyword;
     }
-    
+
     // 分页
     $page = $check->is_number($_REQUEST['page']) ? $_REQUEST['page'] : 1;
     $page_url = 'video.php' . ($cat_id ? '?cat_id=' . $cat_id : '');
     $limit = $dou->pager('video', 15, $page, $page_url, $where, $get);
-    
+
     $sql = "SELECT id, title, cat_id, image, add_time FROM " . $dou->table('video') . $where . " ORDER BY id DESC" . $limit;
     $query = $dou->query($sql);
     while ($row = $dou->fetch_array($query)) {
         $cat_name = $dou->get_one("SELECT cat_name FROM " . $dou->table('video_category') . " WHERE cat_id = '$row[cat_id]'");
         $add_time = date("Y-m-d", $row['add_time']);
-        
+
         $video_list[] = array(
                 "id" => $row['id'],
                 "cat_id" => $row['cat_id'],
                 "cat_name" => $cat_name,
                 "title" => $row['title'],
                 "image" => $row['image'],
-                "add_time" => $add_time 
+                "add_time" => $add_time
         );
     }
-    
+
     // 首页显示视频数量限制框
     for($i=1; $i<=$_CFG['home_display_video']; $i++) {
         $sort_bg .= "<li><em></em></li>";
     }
-    
+
     // 赋值给模板
     $smarty->assign('if_sort', $_SESSION['if_sort']);
     $smarty->assign('sort', get_sort_video());
@@ -74,9 +76,9 @@ if ($rec == 'default') {
     $smarty->assign('keyword', $keyword);
     $smarty->assign('video_category', $dou->get_category_nolevel('video_category'));
     $smarty->assign('video_list', $video_list);
-    
+
     $smarty->display('video.htm');
-} 
+}
 
 /**
  * +----------------------------------------------------------
@@ -87,9 +89,9 @@ elseif ($rec == 'add') {
     $smarty->assign('ur_here', $_LANG['video_add']);
     $smarty->assign('action_link', array(
             'text' => $_LANG['video'],
-            'href' => 'video.php' 
+            'href' => 'video.php'
     ));
-    
+
     // 格式化自定义参数，并存到数组$video，视频编辑页面中调用视频详情也是用数组$video，
     if ($_DEFINED['video']) {
         $defined = explode(',', $_DEFINED['video']);
@@ -99,30 +101,30 @@ elseif ($rec == 'add') {
         $video['defined'] = trim($defined_video);
         $video['defined_count'] = count(explode("\n", $video['defined'])) * 2;
     }
-    
+
     // CSRF防御令牌生成
     $smarty->assign('token', $firewall->get_token());
-    
+
     // 赋值给模板
     $smarty->assign('form_action', 'insert');
     $smarty->assign('video_category', $dou->get_category_nolevel('video_category'));
     $smarty->assign('video', $video);
-    
+
     $smarty->display('video.htm');
-} 
+}
 
 elseif ($rec == 'insert') {
     // 验证标题
     if (empty($_POST['title'])) $dou->dou_msg($_LANG['video_title'] . $_LANG['is_empty']);
-    
+
     // 图片上传
     if ($_FILES['image']['name'] != '')
         $image = $images_dir . $img->upload_image('image', $img->create_file_name('video'));
-    
+
     // 数据格式化
     $add_time = time();
     $_POST['defined'] = str_replace("\r\n", ',', $_POST['defined']);
-        
+
     // CSRF防御令牌验证
     $firewall->check_token($_POST['token']);
 
@@ -138,10 +140,10 @@ elseif ($rec == 'insert') {
             'add_time'      => $add_time,
         );
     $dou->insert('video',$data);
-    
+
     $dou->create_admin_log($_LANG['video_add'] . ': ' . $_POST['title']);
     $dou->dou_msg($_LANG['video_add_succes'], 'video.php');
-} 
+}
 
 /**
  * +----------------------------------------------------------
@@ -152,15 +154,15 @@ elseif ($rec == 'edit') {
     $smarty->assign('ur_here', $_LANG['video_edit']);
     $smarty->assign('action_link', array(
             'text' => $_LANG['video'],
-            'href' => 'video.php' 
+            'href' => 'video.php'
     ));
-    
+
     // 验证并获取合法的ID
     $id = $check->is_number($_REQUEST['id']) ? $_REQUEST['id'] : '';
-    
+
     $query = $dou->select($dou->table('video'), '*', '`id` = \'' . $id . '\'');
     $video = $dou->fetch_array($query);
-    
+
     // 格式化自定义参数
     if ($_DEFINED['video'] || $video['defined']) {
         $defined = explode(',', $_DEFINED['video']);
@@ -175,30 +177,30 @@ elseif ($rec == 'edit') {
     // 格式化文件名
     $basename = basename($video['file']);
     $video['filename'] = substr($basename, 0, strrpos($basename, '.'));
-    
+
     // CSRF防御令牌生成
     $smarty->assign('token', $firewall->get_token());
-    
+
     // 赋值给模板
     $smarty->assign('form_action', 'update');
     $smarty->assign('video_category', $dou->get_category_nolevel('video_category'));
     $smarty->assign('video', $video);
-    
+
     $smarty->display('video.htm');
-} 
+}
 
 elseif ($rec == 'update') {
     // 验证标题
     if (empty($_POST['title'])) $dou->dou_msg($_LANG['video_title'] . $_LANG['is_empty']);
-        
+
     // 图片上传
     if ($_FILES['image']['name'] != '') {
         $image = $images_dir . $img->upload_image('image', $img->create_file_name('video', $_POST['id'], 'image'));
     }
-    
+
     // 格式化自定义参数
     $_POST['defined'] = str_replace("\r\n", ',', $_POST['defined']);
-    
+
     // CSRF防御令牌验证
     $firewall->check_token($_POST['token']);
 
@@ -215,10 +217,10 @@ elseif ($rec == 'update') {
     if ($image) {
         $data['image'] = $image;
     }
-    
+
     $dou->create_admin_log($_LANG['video_edit'] . ': ' . $_POST['title']);
     $dou->dou_msg($_LANG['video_edit_succes'], 'video.php');
-} 
+}
 
 /**
  * +----------------------------------------------------------
@@ -227,10 +229,10 @@ elseif ($rec == 'update') {
  */
 elseif ($rec == 'sort') {
     $_SESSION['if_sort'] = $_SESSION['if_sort'] ? false : true;
-    
+
     // 跳转到上一页面
     $dou->dou_header($_SERVER['HTTP_REFERER']);
-} 
+}
 
 /**
  * +----------------------------------------------------------
@@ -240,13 +242,13 @@ elseif ($rec == 'sort') {
 elseif ($rec == 'set_sort') {
     // 验证并获取合法的ID
     $id = $check->is_number($_REQUEST['id']) ? $_REQUEST['id'] : $dou->dou_msg($_LANG['illegal'], 'video.php');
-    
+
     $max_sort = $dou->get_one("SELECT sort FROM " . $dou->table('video') . " ORDER BY sort DESC");
     $new_sort = $max_sort + 1;
     $dou->query("UPDATE " . $dou->table('video') . " SET sort = '$new_sort' WHERE id = '$id'");
-    
+
     $dou->dou_header($_SERVER['HTTP_REFERER']);
-} 
+}
 
 /**
  * +----------------------------------------------------------
@@ -256,10 +258,10 @@ elseif ($rec == 'set_sort') {
 elseif ($rec == 'del_sort') {
     // 验证并获取合法的ID
     $id = $check->is_number($_REQUEST['id']) ? $_REQUEST['id'] : $dou->dou_msg($_LANG['illegal'], 'video.php');
-    
+
     $dou->query("UPDATE " . $dou->table('video') . " SET sort = '' WHERE id = '$id'");
     $dou->dou_header($_SERVER['HTTP_REFERER']);
-} 
+}
 
 /**
  * +----------------------------------------------------------
@@ -270,19 +272,19 @@ elseif ($rec == 'del') {
     // 验证并获取合法的ID
     $id = $check->is_number($_REQUEST['id']) ? $_REQUEST['id'] : $dou->dou_msg($_LANG['illegal'], 'video.php');
     $title = $dou->get_one("SELECT title FROM " . $dou->table('video') . " WHERE id = '$id'");
-    
+
     if (isset($_POST['confirm']) ? $_POST['confirm'] : '') {
         // 删除相应商品图片
         $image = $dou->get_one("SELECT image FROM " . $dou->table('video') . " WHERE id = '$id'");
         $dou->del_image($image);
-        
+
         $dou->create_admin_log($_LANG['video_del'] . ': ' . $title);
         $dou->delete($dou->table('video'), "id = $id", 'video.php');
     } else {
         $_LANG['del_check'] = preg_replace('/d%/Ums', $title, $_LANG['del_check']);
         $dou->dou_msg($_LANG['del_check'], 'video.php', '', '30', "video.php?rec=del&id=$id");
     }
-} 
+}
 
 /**
  * +----------------------------------------------------------
@@ -317,10 +319,10 @@ function get_sort_video() {
     while ($row = $GLOBALS['dou']->fetch_array($query)) {
         $sort[] = array(
                 "id" => $row['id'],
-                "title" => $row['title'] 
+                "title" => $row['title']
         );
     }
-    
+
     return $sort;
 }
 ?>

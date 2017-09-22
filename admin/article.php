@@ -1,7 +1,7 @@
 <?php
 define('IN_LOTHAR', true);
 define('CMOD', 'article');
-define('RE_THUMB', tue);
+define('RE_THUMB', true);
 require (dirname(__FILE__) . '/include/init.php');
 
 // rec操作项的初始化

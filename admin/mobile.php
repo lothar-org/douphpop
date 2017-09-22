@@ -37,7 +37,7 @@ if ($rec == 'system') {
     elseif ($act == 'update') {
         // 上传图片生成
         if ($_FILES['mobile_logo']['name'] != '') {
-            $logo_dir = ROOT_PATH . M_PATH . '/theme/' . $_CFG['mobile_theme'] . '/images/'; // logo上传路径,结尾加斜杠
+            $logo_dir = ROOT_PATH . M_PATH . '/theme/' . $_CFG['mobile_theme'] . '/sys/'; // logo上传路径,结尾加斜杠
             $logo = new Upload($logo_dir, ''); // 实例化类文件
             $upfile = $logo->upload_image('mobile_logo', 'logo'); // 上传的文件域
             $_POST['mobile_logo'] = $upfile;
@@ -58,9 +58,9 @@ if ($rec == 'system') {
     // 删除手机版LOGO图片
     elseif ($act == 'clear_logo') {
         $image = $dou->get_one("SELECT value FROM " . $dou->table('config') . " WHERE name = 'mobile_logo'");
-        $dou->del_image(M_PATH . '/theme/' . $_CFG['mobile_theme'] . '/images/' . $image);
+        $dou->del_image(M_PATH . '/theme/' . $_CFG['mobile_theme'] . '/sys/' . $image);
 
-        $dou->create_admin_log($_LANG['del'] . ': ' . M_PATH . '/theme/' . $_CFG['mobile_theme'] . '/images/' . $image);
+        $dou->create_admin_log($_LANG['del'] . ': ' . M_PATH . '/theme/' . $_CFG['mobile_theme'] . '/sys/' . $image);
         $dou->query("UPDATE " . $dou->table('config') . " SET value = '' WHERE name = 'mobile_logo'");
         $dou->dou_msg($_LANG['del_succes'], 'mobile.php');
     }
@@ -405,7 +405,7 @@ function get_cfg_list($tab = 'main') {
             $box = explode(",", $row['box']);
         }
         if ($row['name'] == 'mobile_logo') {
-            $row['value'] = $row['value'] ? M_PATH . '/theme/' . $GLOBALS['_CFG']['mobile_theme'] . '/images/' . $row['value'] : '';
+            $row['value'] = $row['value'] ? M_PATH . '/theme/' . $GLOBALS['_CFG']['mobile_theme'] . '/sys/' . $row['value'] : '';
         }
 
         $cue = $GLOBALS['_LANG'][$row['name'] . '_cue'];

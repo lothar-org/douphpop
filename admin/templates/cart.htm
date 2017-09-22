@@ -1,0 +1,176 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>{$lang.home}{if $ur_here} - {$ur_here} {/if}</title>
+<meta name="Copyright" content="Lothar Design." />
+<link href="templates/public.css" rel="stylesheet" type="text/css">
+<link href="templates/order.css" rel="stylesheet" type="text/css">
+{include file="javascript.htm"}
+<script type="text/javascript" src="images/jquery.autotextarea.js"></script>
+</head>
+<body>
+<div id="dcWrap"> {include file="header.htm"}
+ <div id="dcLeft">{include file="menu.htm"}</div>
+ <div id="dcMain"> {include file="ur_here.htm"}
+  <div class="mainBox" style="{$workspace.height}">
+   <!--{if $rec eq 'default'} 订单列表 -->
+   <h3>{$ur_here}</h3>
+   <!--{if $key}-->
+   <div class="filter">
+    <form action="cart.php" method="post">
+     <select name="srckey">
+      <!--{foreach from=$key item=v}-->
+      <option value="{$v.value}"{if $v.cur} selected="selected"{/if}>{$v.name}</option>
+      <!--{/foreach}-->
+     </select>
+     <input name="srcval" type="text" class="inpMain" value="{$srcval}" size="20" />
+     <input name="submit" class="btnGray" type="submit" value="{$lang.btn_filter}" />
+    </form>
+   </div>
+   <!--{/if}-->
+   <div id="list">
+    <form name="action" method="post" action="cart.php?rec=action">
+     <table width="100%" border="0" cellpadding="8" cellspacing="0" class="tableBasic">
+      <tr>
+       <th width="22" align="center"><input name='chkall' type='checkbox' id='chkall' onclick='selectcheckbox(this.form)' value='check'></th>
+       <th width="40" align="center">{$lang.record_id}</th>
+       <th align="center">{$lang.cart_uid}</th>
+       <th align="center">{$lang.cart_nickname}</th>
+       <th align="center">{$lang.cart_total}</th>
+       <th align="center">{$lang.cart_product_amount}</th>
+       <th align="center">{$lang.cart_status}</th>
+       <th align="center">{$lang.cart_addtime}</th>
+       <th width="100" align="center">{$lang.handler}</th>
+      </tr>
+      <!--{foreach from=$cart_list item=cart}-->
+      <tr>
+       <td align="center"><input type="checkbox" name="checkbox[]" value="{$cart.id}" /></td>
+       <td align="center">{$cart.id}</td>
+       <td align="center"><a target="_blank" href="{$cart.url}">{$cart.uid}</a></td>
+       <td align="center"><a target="_blank" href="{$cart.url}">{$cart.nickname}</a></td>
+       <td align="center">{$cart.total}</td>
+       <td align="center">{$cart.product_amount}</td>
+       <td align="center">{$cart.status_format}</td>
+       <td align="center">{$cart.addtime}</td>
+       <td align="center"><a target="_blank" href="{$cart.url}">导出Excel</a> | <a href="cart.php?rec=del&cart_id={$cart.id}">{$lang.del}</a></td>
+      </tr>
+      <!--{/foreach}-->
+     </table>
+     <div class="action">
+      <select name="action">
+       <option value="0">{$lang.select}</option>
+       <option value="del_all">{$lang.del}</option>
+      <!--{if $excel}-->
+      <option value="excel">{$lang.user_excel}</option>
+      <option value="excel_all">{$lang.user_excel_all}（慢）</option>
+      <!--{/if}-->
+       <!-- <option value="cancel_all">{$lang.cart_cancel}</option> -->
+      </select>
+      <input name="submit" class="btn" type="submit" value="{$lang.btn_execute}" />
+     </div>
+    </form>
+   </div>
+   <div class="clear"></div>
+   {include file="pager.htm"}
+   <!--{/if}-->
+   <!--{if $rec eq 'view'} 订单详情 -->
+   <div id="order">
+    <h3><a href="{$action_link.href}" class="actionBtn">{$action_link.text}</a>{$ur_here}</h3>
+    <table width="100%" border="0" cellpadding="8" cellspacing="0" class="tableBasic">
+     <tr>
+      <th colspan="4" align="left">{$lang.cart_cart_sn}：{$cart.cart_sn}</th>
+      <th colspan="4" align="right">{$lang.cart_status}：{$cart.status_format}</th>
+     </tr>
+     <tr>
+      <td width="60">{$lang.cart_contact}：</td>
+      <td>{$cart.contact}</td>
+      <td width="60">{$lang.cart_telephone}：</td>
+      <td>{$cart.telephone}</td>
+      <td width="60">{$lang.cart_email}：</td>
+      <td>{$cart.email}</td>
+      <td width="60" align="right">{$lang.cart_postcode}：</td>
+      <td>{$cart.postcode}</td>
+     </tr>
+     <tr>
+      <td>{$lang.cart_address}：</td>
+      <td colspan="7">{$cart.address}</td>
+     </tr>
+     <tr>
+      <td>{$lang.cart_payment}：</td>
+      <td>{$cart.pay_name}</td>
+      <td>{$lang.cart_shipping}：</td>
+      <td colspan="3">{$cart.shipping_name}</td>
+      <td align="right">{$lang.cart_add_time}：</td>
+      <td>{$cart.add_time}</td>
+     </tr>
+    </table>
+    <table width="100%" border="0" cellpadding="8" cellspacing="0" class="tableBasic" style="margin:30px 0;">
+     <tr>
+      <td align="left"><strong>{$lang.cart_name}</strong></td>
+      <td width="150" align="center"><strong>{$lang.cart_price}</strong></td>
+      <td width="150" align="center"><strong>{$lang.number}</strong></td>
+     </tr>
+     <!--{foreach from=$cart.product_list item=product}-->
+     <tr>
+      <td><a href="{$product.url}" target="_blank">{$product.name}</a></td>
+      <td align="center">{$product.price}</td>
+      <td align="center">x {$product.product_number}</td>
+     </tr>
+     <!--{/foreach}-->
+     <tr>
+      <td colspan="3" align="right" style="line-height:180%">
+       {$lang.cart_product_amount}：{$cart.product_amount_format}<br />
+       {$lang.cart_shipping_fee}：{$cart.shipping_fee_format}<br />
+       {$lang.cart_cart_amount}：{$cart.cart_amount_format}</td>
+      </td>
+     </tr>
+    </table>
+    <div class="tracking">
+     <div class="trackingNo"><!--{if $cart.tracking_no}-->{$cart.shipping_name}：{$cart.tracking_no}
+     <button class="btnShow" type="button" onClick="douDisplay('actionBox', 'show')">{$lang.edit}</button><!--{/if}--></div>
+     <div class="trackingSubmit">
+     <div id="actionBox"{if $cart.tracking_no} class="edit"{/if}>
+     <form action="cart.php?rec=tracking" method="post">
+      <select name="shipping_id">
+       <option value="0">{$lang.cart_shipping_select}</option>
+       <!--{foreach from=$shipping_list item=shipping}-->
+       <!--{if $shipping.unique_id eq $cart.shipping_id}-->
+       <option value="{$shipping.unique_id}" selected="selected">{$shipping.name}</option>
+       <!--{else}-->
+       <option value="{$shipping.unique_id}">{$shipping.name}</option>
+       <!--{/if}-->
+       <!--{/foreach}-->
+      </select>
+      <input name="tracking_no" type="text" class="inpMain" value="{$cart.tracking_no}" size="40" />
+      <input type="hidden" name="cart_id" value="{$cart.cart_id}">
+      <input name="submit" class="btn" type="submit" value="{$lang.cart_tracking_submit}" />
+     </form>
+     <!--{if $cart.tracking_no}--><button class="btnHide" type="button">{$lang.cancel}</button><!--{/if}-->
+     </div>
+     </div>
+    </div>
+   </div>
+   <!--{/if}-->
+ </div>
+ </div>
+ {include file="footer.htm"}
+ </div>
+<script type="text/javascript">
+ {literal}
+ // 表单重置
+ onload = function() {document.forms['action'].reset();}
+
+ // 显示和隐藏
+ $(document).ready(function(){
+   $(".btnHide").click(function(){
+       $("#actionBox").hide();
+   });
+   $(".btnShow").click(function(){
+       $("#actionBox").show();
+   });
+ });
+ {/literal}
+</script>
+</body>
+</html>

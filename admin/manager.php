@@ -1,13 +1,16 @@
 <?php
 define('IN_LOTHAR', true);
-// rec操作项的初始化
-$rec = $check->is_rec($_REQUEST['rec']) ? $_REQUEST['rec'] : 'default';
+// 操蛋的设计
+$rec = @$_REQUEST['rec'];
 if ($rec = 'manager_log') {
     define('CMOD', 'manager_log');
 } else {
     define('CMOD', 'manager');
 }
 require (dirname(__FILE__) . '/include/init.php');
+
+// rec操作项的初始化
+$rec = $check->is_rec($rec) ? $rec : 'default';
 
 // 赋值给模板
 $smarty->assign('rec', $rec);

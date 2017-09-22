@@ -35,7 +35,7 @@ if ($rec == 'default') {
     $keyword = isset($_REQUEST['keyword']) ? trim($_REQUEST['keyword']) : '';
 
     // 筛选条件
-    $where = ' WHERE cat_id IN (' . $cat_id . $dou->dou_child_id('case_category', $cat_id) . ')';
+    $where = ' WHERE a.cat_id IN ('. $cat_id . $dou->dou_child_id('case_category', $cat_id) .')';
     if ($keyword) {
         $where .= ($where ? ' AND ' : ' WHERE ') . "a.title LIKE '%$keyword%'";
         $get = '&keyword=' . $keyword;
