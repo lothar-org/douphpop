@@ -10,7 +10,7 @@ Target Server Type    : MYSQL
 Target Server Version : 50540
 File Encoding         : 65001
 
-Date: 2017-09-15 12:23:09
+Date: 2017-09-22 15:32:39
 */
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -35,7 +35,7 @@ CREATE TABLE `dou_admin` (
 -- ----------------------------
 -- Records of dou_admin
 -- ----------------------------
-INSERT INTO `dou_admin` VALUES ('1', 'admin', '', 'e10adc3949ba59abbe56e057f20f883e', 'ALL', '99', '1478503787', '1505448609', '127.0.0.1');
+INSERT INTO `dou_admin` VALUES ('1', 'admin', '', 'e10adc3949ba59abbe56e057f20f883e', 'ALL', '99', '1478503787', '1506063067', '127.0.0.1');
 
 -- ----------------------------
 -- Table structure for dou_admin_log
@@ -50,11 +50,17 @@ CREATE TABLE `dou_admin_log` (
   PRIMARY KEY (`id`),
   KEY `create_time` (`create_time`),
   KEY `user_id` (`user_id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+) ENGINE=MyISAM AUTO_INCREMENT=7 DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 -- Records of dou_admin_log
 -- ----------------------------
+INSERT INTO `dou_admin_log` VALUES ('1', '1505815669', '1', '管理员登录: 登录成功！', '127.0.0.1');
+INSERT INTO `dou_admin_log` VALUES ('2', '1506063067', '1', '管理员登录: 登录成功！', '127.0.0.1');
+INSERT INTO `dou_admin_log` VALUES ('3', '1506064297', '1', '数据备份: D20170922T151103.sql', '127.0.0.1');
+INSERT INTO `dou_admin_log` VALUES ('4', '1506064315', '1', '备份文件删除: D20170805T155711.sql', '127.0.0.1');
+INSERT INTO `dou_admin_log` VALUES ('5', '1506064337', '1', '会员管理: ', '127.0.0.1');
+INSERT INTO `dou_admin_log` VALUES ('6', '1506064569', '1', '编辑案例分类: fdjf', '127.0.0.1');
 
 -- ----------------------------
 -- Table structure for dou_article
@@ -694,7 +700,7 @@ CREATE TABLE `dou_rbac_module` (
   `code` varchar(50) NOT NULL DEFAULT '' COMMENT '识别码',
   `name` varchar(50) NOT NULL DEFAULT '' COMMENT '名称',
   PRIMARY KEY (`mid`)
-) ENGINE=MyISAM AUTO_INCREMENT=25 DEFAULT CHARSET=utf8 COMMENT='模块表';
+) ENGINE=MyISAM AUTO_INCREMENT=32 DEFAULT CHARSET=utf8 COMMENT='模块表';
 
 -- ----------------------------
 -- Records of dou_rbac_module
@@ -722,7 +728,14 @@ INSERT INTO `dou_rbac_module` VALUES ('20', '0', 'theme', '模板管理');
 INSERT INTO `dou_rbac_module` VALUES ('21', '0', 'mobile', '手机端');
 INSERT INTO `dou_rbac_module` VALUES ('22', '0', 'manager_log', '操作日志');
 INSERT INTO `dou_rbac_module` VALUES ('23', '0', 'district', '国家管理');
-INSERT INTO `dou_rbac_module` VALUES ('24', '0', 'diy', '自定义管理');
+INSERT INTO `dou_rbac_module` VALUES ('24', '0', 'diy', 'DIY管理');
+INSERT INTO `dou_rbac_module` VALUES ('25', '0', 'product_category', '产品分类');
+INSERT INTO `dou_rbac_module` VALUES ('26', '0', 'article_category', '文章分类');
+INSERT INTO `dou_rbac_module` VALUES ('27', '0', 'video_category', '视频分类');
+INSERT INTO `dou_rbac_module` VALUES ('28', '0', 'gallery_category', '图集分类');
+INSERT INTO `dou_rbac_module` VALUES ('29', '0', 'download_category', '下载分类');
+INSERT INTO `dou_rbac_module` VALUES ('30', '0', 'case_category', '案例分类');
+INSERT INTO `dou_rbac_module` VALUES ('31', '0', 'diy_category', 'DIY分类');
 
 -- ----------------------------
 -- Table structure for dou_rbac_role

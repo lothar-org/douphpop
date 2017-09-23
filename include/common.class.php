@@ -1186,7 +1186,7 @@ class Common extends DbMysql {
     }
 
     /*调试专用*/
-    function debug($var=null, $die=false, $dump=false, $html = '<hr>') 
+    function debug($var=null, $die=false, $dump=false, $html = '<hr>')
     {
         $dump = empty($var) ? true : $dump;
         if ($dump) {
@@ -1194,13 +1194,13 @@ class Common extends DbMysql {
         } else {
             if (is_string($var)) {
                 echo $var.'<br>';
-            } elseif (is_object($var)) {
+            } elseif (is_numeric($var) || is_object($var)) {
                 echo '<pre>';var_dump($var);
             } elseif (is_array($var)) {
                 echo '<pre>';print_r($var);
             }
         }
-        if (!is_string($var)) 
+        if (!is_string($var))
             echo '</pre>';
         if ($die)
             exit();
