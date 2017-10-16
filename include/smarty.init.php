@@ -35,7 +35,7 @@ if (SMARTY_CONF==1) { // 前台
     */
     // SMARTY配置
     $smarty->template_dir = ROOT_PATH . 'theme'. DS . $_CFG['site_theme'];// html模板地址
-    $smarty->compile_dir = ROOT_PATH . 'temlpate_c';// 模板编译生成的文件（能让php脚本编译的）
+    $smarty->compile_dir = ROOT_PATH . 'template_c';// 模板编译生成的文件（能让php脚本编译的）
     // $smarty->cache_dir = ROOT_PATH . 'cache';// 缓存（数据库查询、临时数据）
     // 以下是开启缓存的两个必要配置。通常不用smarty的缓存机制。
     // $smarty->caching = true;// 开启缓存,很笨的缓存
@@ -102,7 +102,7 @@ if (SMARTY_CONF==1) { // 前台
 
 } elseif (SMARTY_CONF==2 && IS_ADMIN===true) {// 后台
     $smarty->template_dir = ROOT_PATH . ADMIN_PATH . '/templates'; // 模板存放目录
-    $smarty->compile_dir = ROOT_PATH . 'temlpate_c/' . ADMIN_PATH; // 编译目录
+    $smarty->compile_dir = ROOT_PATH . 'template_c/' . ADMIN_PATH; // 编译目录
     // 如果编译和缓存目录不存在则建立
     if (!file_exists($smarty->compile_dir)) mkdir($smarty->compile_dir, 0777);
     // Smarty 过滤器
@@ -116,7 +116,7 @@ if (SMARTY_CONF==1) { // 前台
 } elseif (SMARTY_CONF==3 && IS_MOBILE) { // 手机
     // SMARTY配置
     $smarty->template_dir = ROOT_PATH . M_PATH . '/theme/' . $_CFG['mobile_theme']; // 模板存放目录
-    $smarty->compile_dir = ROOT_PATH . 'temlpate_c/' . M_PATH; // 编译目录
+    $smarty->compile_dir = ROOT_PATH . 'template_c/' . M_PATH; // 编译目录
     // 如果编译和缓存目录不存在则建立
     if (!file_exists($smarty->compile_dir)) mkdir($smarty->compile_dir, 0777);
     // Smarty 过滤器
