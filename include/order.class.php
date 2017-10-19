@@ -6,20 +6,10 @@ class Order {
     * 购物车 信息
     * 检测数据库中是否有值
     */
-    public function user_cart($uid='all')
+    public function user_cart($uid)
     {
-        if (is_numeric($uid)) {
-            $user_cart_c = $GLOBALS['dou']->fetchRow('SELECT pro_ids,num_ids from '. $GLOBALS['dou']->table('cart') .' where uid='.$uid);
-            if (empty($user_cart_c)) {
-                return array();
-            }
-            $pro_ids = explode(',', $user_cart_c['pro_ids']);
-            $num_ids = explode(',', $user_cart_c['num_ids']);
-            foreach ($pro_ids as $k => $v) {
-                $user_cart[$v] = $num_ids[$k];
-            }
-            $_SESSION[DOU_ID]['cart'] = $user_cart;
-        } elseif (is_string($uid)) {
+        // if (is_string($uid)) {
+        if (intval($uid)>0) {
             // $uid 可能的值 '1=1'  'a.uid in (1,2)'  'a.uid=1'  'a.id in (3,4)'
             $us = $GLOBALS['dou']->fetchAll(sprintf('SELECT a.id,a.pro_ids,a.num_ids,a.uid,a.status,a.addtime,b.nickname from %s a join %s b on a.uid=b.user_id where %s',$GLOBALS['dou']->table('cart'),$GLOBALS['dou']->table('user'),$uid));
             foreach ((array)$us as $key => $value) {
@@ -42,8 +32,21 @@ class Order {
                 );
             }
             return $usa;
+        }
+
+        if ($_SESSION[DOU_ID]['cart']) {
+            $user_cart = $_SESSION[DOU_ID]['cart'];
         } else {
-            $user_cart = $_SESSION[DOU_ID]['cart']?$_SESSION[DOU_ID]['cart']:'';
+            $user_cart_c = $GLOBALS['dou']->fetchRow('SELECT pro_ids,num_ids from '. $GLOBALS['dou']->table('cart') .' where uid='.$uid);
+            if (empty($user_cart_c)) {
+                return array();
+            }
+            $pro_ids = explode(',', $user_cart_c['pro_ids']);
+            $num_ids = explode(',', $user_cart_c['num_ids']);
+            foreach ($pro_ids as $k => $v) {
+                $user_cart[$v] = $num_ids[$k];
+            }
+            $_SESSION[DOU_ID]['cart'] = $user_cart;
         }
 
         return $this->get_cart($user_cart);
@@ -59,7 +62,7 @@ class Order {
      * +----------------------------------------------------------
      */
     function get_cart($session_cart,$shell='') {
-        if (empty($session_cart)) 
+        if (empty($session_cart))
             return array();
         // 获取产品ID组 和 产品信息
         // if (is_array($shell)) {
@@ -112,7 +115,7 @@ class Order {
         }
         return array();
     }
-    
+
     /**
      * +----------------------------------------------------------
      * 生成唯一的订单编号
@@ -121,7 +124,7 @@ class Order {
     function create_order_sn() {
         // 随机生成订单号
         $order_sn = date('Ymd') . str_pad(mt_rand(1, 99999), 5, '0', STR_PAD_LEFT);
-        
+
         if ($GLOBALS['dou']->get_one("SELECT id FROM " . $GLOBALS['dou']->table('order') . " WHERE order_sn = '$order_sn'")) {
             $this->create_order_sn();
         }
@@ -143,7 +146,7 @@ class Order {
                 $array[] = $item;
             }
         }
-        
+
         return $array;
     }
 
@@ -163,7 +166,7 @@ class Order {
             $image = explode(".", $row['image']);
             $row['thumb'] = ROOT_URL . $image[0] . "_thumb." . $image[1];
             $row['url'] = $GLOBALS['dou']->rewrite_url('product', $row['product_id']);
-            
+
             $product_list[] = $row;
         }
         return $product_list;
@@ -187,7 +190,7 @@ class Order {
         }
         return false;
     }
-    
+
     /**
      * +----------------------------------------------------------
      * 改变订单状态
@@ -200,7 +203,7 @@ class Order {
         // 取消所选订单
         $GLOBALS['dou']->query("UPDATE " . $GLOBALS['dou']->table('order') . " SET status = '$status' WHERE order_sn = '$order_sn'");
     }
-    
+
     /**
      * +----------------------------------------------------------
      * 批量取消订单
@@ -208,14 +211,14 @@ class Order {
      */
     function cancel_all($checkbox) {
         $sql_in = $GLOBALS['dou']->create_sql_in($_POST['checkbox']);
-        
+
         // 取消所选订单
         $GLOBALS['dou']->query("UPDATE " . $GLOBALS['dou']->table('order') . " SET status = '-1' WHERE order_id " . $sql_in);
-        
+
         $GLOBALS['dou']->create_admin_log($GLOBALS['_LANG']['order_cancel'] . ': ' . strtoupper('order') . ' ' . addslashes($sql_in));
         $GLOBALS['dou']->dou_msg($GLOBALS['_LANG']['order_cancel_success'], 'order.php');
     }
-    
+
     /**
      * +----------------------------------------------------------
      * 获取支付
@@ -224,7 +227,7 @@ class Order {
     function get_payment_list() {
         /* 获取产品列表 */
         $query = $GLOBALS['dou']->query("SELECT * FROM " . $GLOBALS['dou']->table('plugin') . " WHERE plugin_group = 'payment'");
-    
+
         while ($row = $GLOBALS['dou']->fetch_array($query)) {
             $image = ROOT_URL . 'include/plugin/' . $row['unique_id'] . '/icon.gif';
             $payment_list[] = array(
@@ -233,10 +236,10 @@ class Order {
                     "image" => $image
             );
         }
-        
+
         return $payment_list;
     }
-    
+
     /**
      * +----------------------------------------------------------
      * 获取支付或配送方式
@@ -245,7 +248,7 @@ class Order {
     function get_shipping_list() {
         /* 获取产品列表 */
         $query = $GLOBALS['dou']->query("SELECT * FROM " . $GLOBALS['dou']->table('plugin') . " WHERE plugin_group = 'shipping'");
-    
+
         while ($row = $GLOBALS['dou']->fetch_array($query)) {
             $config = unserialize($row['config']);
             $fee_format = $config['fee'] ? $GLOBALS['dou']->price_format($config['fee']) : $GLOBALS['_LANG']['order_shipping_free'];
@@ -260,7 +263,7 @@ class Order {
                     "free_format" => $free_format
             );
         }
-        
+
         return $shipping_list;
     }
 

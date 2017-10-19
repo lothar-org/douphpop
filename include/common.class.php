@@ -21,7 +21,7 @@ class Common extends DbMysql {
         if ($cat_id) {
             $fields = $GLOBALS['dou']->get_one('SELECT fields from '.$GLOBALS['dou']->table($table .'_category').' where cat_id='.$cat_id);
         }
-        $fieldsarr = explode(',', $fields);
+        $fieldsarr = $fields?explode(',', $fields):null;
 
         $GLOBALS['smarty']->assign('designate', $designate);
         $GLOBALS['smarty']->assign('fieldsarr', $fieldsarr);
