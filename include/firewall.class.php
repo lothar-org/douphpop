@@ -13,7 +13,7 @@ class Firewall {
         // 交互数据转义操作
         $this->dou_magic_quotes();
     }
-    
+
     /**
      * +----------------------------------------------------------
      * 安全处理用户输入信息
@@ -27,10 +27,10 @@ class Firewall {
         } else {
             $value = htmlspecialchars($value, ENT_QUOTES);
         }
-        
+
         return $value;
     }
-    
+
     /**
      * +----------------------------------------------------------
      * 交互数据转义操作
@@ -46,7 +46,7 @@ class Firewall {
             $_REQUEST = $this->addslashes_deep($_REQUEST);
         }
     }
-    
+
     /**
      * +----------------------------------------------------------
      * 递归方式的对变量中的特殊字符进行转义
@@ -57,7 +57,7 @@ class Firewall {
         if (empty($value)) {
             return $value;
         }
-        
+
         if (is_array($value)) {
             foreach ((array) $value as $k => $v) {
                 unset($value[$k]);
@@ -71,10 +71,10 @@ class Firewall {
         } else {
             $value = addslashes($value);
         }
-        
+
         return $value;
     }
-    
+
     /**
      * +----------------------------------------------------------
      * 递归方式的对变量中的特殊字符去除转义
@@ -84,7 +84,7 @@ class Firewall {
         if (empty($value)) {
             return $value;
         }
-        
+
         if (is_array($value)) {
             foreach ((array) $value as $k => $v) {
                 unset($value[$k]);
@@ -100,7 +100,7 @@ class Firewall {
         }
         return $value;
     }
-    
+
     /**
      * +----------------------------------------------------------
      * 设置令牌
@@ -113,11 +113,11 @@ class Firewall {
         $token = md5(uniqid(rand(), true));
         $n = rand(1, 24);
         $_SESSION[DOU_ID]['token'][$id] = substr($token, $n, 8);
-        
+
         // 如果不是在后台调用则返回值
         if (!$is_admin) return $_SESSION[DOU_ID]['token'][$id];
     }
-    
+
     /**
      * +----------------------------------------------------------
      * 设置后台令牌
@@ -126,7 +126,7 @@ class Firewall {
     function set_admin_token() {
         $this->set_token('admin', true);
     }
-    
+
     /**
      * +----------------------------------------------------------
      * 验证令牌（如果是在后台操作，将采用每次登录更新令牌）
@@ -167,7 +167,7 @@ class Firewall {
             }
         }
     }
-    
+
     /**
      * +----------------------------------------------------------
      * 获取后台令牌
@@ -178,7 +178,7 @@ class Firewall {
     function get_token($id = 'admin') {
         return $_SESSION[DOU_ID]['token'][$id];
     }
-    
+
     /**
      * +----------------------------------------------------------
      * 获取合法的分类ID或者栏目ID
@@ -192,7 +192,7 @@ class Firewall {
         // 如果有设置则验证合法性，验证通过的情况包括为空和赋值合法，分类页允许ID为空，详细页（包括单页面）不允许ID为空
         if ((isset($id) && !$GLOBALS['check']->is_number($id)) || (isset($unique_id) && !$GLOBALS['check']->is_unique_id($unique_id)))
             return -1;
-        
+
         if (isset($unique_id)) {
             if ($module == 'page') {
                 $get_id = $GLOBALS['dou']->get_one("SELECT id FROM " . $GLOBALS['dou']->table($module) . " WHERE unique_id = '$unique_id'");
@@ -218,9 +218,9 @@ class Firewall {
                 return strpos($module, 'category') ? 0 : -1;
             }
         }
-        
+
         $legal_id = $get_id ? $get_id : -1;
-        
+
         return $legal_id;
     }
 }

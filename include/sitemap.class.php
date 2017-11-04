@@ -1,23 +1,25 @@
 <?php
+if (!defined('IN_LOTHAR')) {die('Hacking attempt');}
 
-if (!defined('IN_LOTHAR')) {
-    die('Hacking attempt');
-}
 class SiteMap {
     var $header = "<\x3Fxml version=\"1.0\" encoding=\"UTF-8\"\x3F>\n\t<urlset xmlns=\"http://www.google.com/schemas/sitemap/0.84\">";
     var $footer = "\t</urlset>";
     var $output;
-    
+
     /**
      * +----------------------------------------------------------
      * 构造函数
      * +----------------------------------------------------------
      */
-    function SiteMap($domain, $today = '') {
+    // function SiteMap($domain, $today = '') {
+    //     $this->domain = $domain;
+    //     $this->today = $today;
+    // }
+    function __construct($domain, $today = '') {
         $this->domain = $domain;
         $this->today = $today;
     }
-    
+
     /**
      * +----------------------------------------------------------
      * 构造站点地图
@@ -29,7 +31,7 @@ class SiteMap {
         $output .= $this->footer;
         return $output;
     }
-    
+
     /**
      * +----------------------------------------------------------
      * 遍历目录将格式转换为sitemap格式
@@ -37,14 +39,14 @@ class SiteMap {
      */
     function read_item() {
         $item = $this->array_item();
-        
+
         $arr = "\t\t<url>\n";
         $arr .= "\t\t\t<loc>$this->domain</loc>\n";
         $arr .= "\t\t\t<lastmod>$this->today</lastmod>\n";
         $arr .= "\t\t\t<changefreq>hourly</changefreq>\n";
         $arr .= "\t\t\t<priority>0.9</priority>\n";
         $arr .= "\t\t</url>\n\n";
-        
+
         foreach ($item as $row) {
             $arr .= "\t\t<url>\n";
             $arr .= "\t\t\t<loc>$row[url]</loc>\n";
@@ -53,10 +55,10 @@ class SiteMap {
             $arr .= "\t\t\t<priority>0.9</priority>\n";
             $arr .= "\t\t</url>\n\n";
         }
-        
+
         return $arr;
     }
-    
+
     /**
      * +----------------------------------------------------------
      * 获取整站目录数据
@@ -68,32 +70,32 @@ class SiteMap {
             $item_array[] = array(
                     "date" => $this->today,
                     "changefreq" => 'weekly',
-                    "url" => $row['url'] 
+                    "url" => $row['url']
             );
         }
-        
+
         // 栏目模块
         foreach ($GLOBALS['_MODULE']['column'] as $module_id) {
             // 栏目
             $item_array[] = array(
                     "date" => $this->today,
                     "changefreq" => 'hourly',
-                    "url" => $GLOBALS['dou']->rewrite_url($module_id . '_category') 
+                    "url" => $GLOBALS['dou']->rewrite_url($module_id . '_category')
             );
             foreach ($GLOBALS['dou']->get_category_nolevel($module_id . '_category') as $row) {
                 $item_array[] = array(
                         "date" => $this->today,
                         "changefreq" => 'hourly',
-                        "url" => $row['url'] 
+                        "url" => $row['url']
                 );
             }
-            
+
             // 内容列表
             foreach ($GLOBALS['dou']->get_list($module_id, 'ALL') as $row) {
                 $item_array[] = array(
                         "date" => $row['add_time'],
                         "changefreq" => 'weekly',
-                        "url" => $row['url'] 
+                        "url" => $row['url']
                 );
             }
         }
@@ -106,11 +108,11 @@ class SiteMap {
                $item_array[] = array(
                         "date" => $this->today,
                         "changefreq" => 'weekly',
-                        "url" => $GLOBALS['dou']->rewrite_url($module_id) 
+                        "url" => $GLOBALS['dou']->rewrite_url($module_id)
                 );
            }
         }
-        
+
         return $item_array;
     }
 }

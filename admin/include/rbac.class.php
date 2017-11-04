@@ -6,11 +6,13 @@ class RBAC
 {
     // public $oop;
     // const guest = 1;
+    var $error_msg;
 
-    // function __construct()
-    // {
-    //     parent::__construct();
-    // }
+    function __construct()
+    {
+        // parent::__construct();
+        $this->error_msg = $error_msg;
+    }
 
     /**
     * 权限验证
@@ -37,7 +39,7 @@ class RBAC
 
     /**
     * 权限验证
-    * @string $rule 待验证的模块 
+    * @string $rule 待验证的模块
     * @string $uid 验证的用户ID
     */
     public function access_check($rule,$uid)

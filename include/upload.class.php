@@ -1,7 +1,6 @@
 <?php
-if (!defined('IN_LOTHAR')) {
-    die('Hacking attempt');
-}
+if (!defined('IN_LOTHAR')) die('Hacking attempt');
+
 class Upload {
     var $images_dir;
     var $thumb_dir;
@@ -16,7 +15,7 @@ class Upload {
      * $thumb_dir 缩略图路径
      * +----------------------------------------------------------
      */
-    function Upload($images_dir = '../upload/', $thumb_dir = 'thumb/', $upfile_type = 'jpg,jpeg,gif,png,bmp,ico', $upfile_size_max = '2048') {
+    function __construct($images_dir = '../upload/', $thumb_dir = 'thumb/', $upfile_type = 'jpg,jpeg,gif,png,bmp,ico', $upfile_size_max = '2048') {
         $this->images_dir = $images_dir; // 文件上传路径 结尾加斜杠
         $this->thumb_dir = $thumb_dir; // 缩略图路径（相对于$images_dir） 结尾加斜杠，留空则跟$images_dir相同
         $this->upfile_type = $upfile_type;

@@ -67,6 +67,7 @@ if (SMARTY_CONF==1) { // 前台
     * 原版： function remove_html_comments($source, & $smarty) {}
             & $smarty 起什么作用？
     */
+    // function remove_html_comments($source, & $smarty) {
     function remove_html_comments($source) {
         global $_CFG;
         $theme_path = ROOT_URL . 'theme';
@@ -80,7 +81,7 @@ if (SMARTY_CONF==1) { // 前台
         // $source = preg_replace('/\"css\//Ums', "\"theme/$_CFG[site_theme]/css/", $source);
         // $source = preg_replace('/\"\.*\/js\//Ums', '"js/', $source);
         // $source = preg_replace('/\"js\//Ums', "\"theme/$_CFG[site_theme]/js/", $source);
-    
+
         $source = preg_replace('/link href\=\"([A-Za-z0-9_-]+)\.css/Ums', "link href=\"theme/$_CFG[site_theme]/$1.css", $source);
         $source = preg_replace('/img src\=\"sys\//Ums', "img src=\"theme/$_CFG[site_theme]/sys/", $source);// 系统文件
         // $source = preg_replace('/img src=\"sys\//Ums', "img src=\"theme/$_CFG[site_theme]/sys/", $source);
@@ -106,11 +107,9 @@ if (SMARTY_CONF==1) { // 前台
     // 如果编译和缓存目录不存在则建立
     if (!file_exists($smarty->compile_dir)) mkdir($smarty->compile_dir, 0777);
     // Smarty 过滤器
-    // function remove_html_comments($source, & $smarty) {
     function remove_html_comments($source) {
         return $source = preg_replace('/<!--.*{(.*)}.*-->/U', '{$1}', $source);
     }
-    // $smarty->register_prefilter('remove_html_comments');
     $smarty->registerFilter('pre','remove_html_comments');
 
 } elseif (SMARTY_CONF==3 && IS_MOBILE) { // 手机
@@ -120,7 +119,6 @@ if (SMARTY_CONF==1) { // 前台
     // 如果编译和缓存目录不存在则建立
     if (!file_exists($smarty->compile_dir)) mkdir($smarty->compile_dir, 0777);
     // Smarty 过滤器
-    // function remove_html_comments($source, & $smarty) {
     function remove_html_comments($source) {
         global $_CFG;
         $theme_path = M_URL . 'theme';
@@ -131,7 +129,6 @@ if (SMARTY_CONF==1) { // 前台
         $source = preg_replace('/^<meta\shttp-equiv=["|\']Content-Type["|\']\scontent=["|\']text\/html;\scharset=(?:.*?)["|\'][^>]*?>\r?\n?/i', '', $source);
         return $source = preg_replace('/<!--.*{(.*)}.*-->/U', '{$1}', $source);
     }
-    // $smarty->register_prefilter('remove_html_comments');
-    $smarty->registerFilter('pre','remove_html_comments'); 
+    $smarty->registerFilter('pre','remove_html_comments');
 }
 ?>

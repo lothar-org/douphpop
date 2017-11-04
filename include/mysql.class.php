@@ -1,8 +1,6 @@
 <?php
+if (!defined('IN_LOTHAR')) die('Hacking attempt');
 
-if (!defined('IN_LOTHAR')) {
-    die('Hacking attempt');
-}
 class DbMysql {
     private $dbhost; // 数据库主机
     private $dbuser; // 数据库用户名
@@ -15,9 +13,19 @@ class DbMysql {
     private $sql; // sql执行语句
     private $result; // 执行query命令的结果资源标识
     private $error_msg; // 数据库错误提示
-                        
+
     // 构造函数
-    function DbMysql($dbhost, $dbuser, $dbpass, $dbname = '', $prefix, $charset='utf8', $pconnect=0) {
+    // function DbMysql($dbhost, $dbuser, $dbpass, $dbname = '', $prefix, $charset='utf8', $pconnect=0) {
+    //     $this->dbhost = $dbhost;
+    //     $this->dbuser = $dbuser;
+    //     $this->dbpass = $dbpass;
+    //     $this->dbname = $dbname;
+    //     $this->prefix = $prefix;
+    //     $this->charset = strtolower(str_replace('-', '', $charset));
+    //     $this->pconnect = $pconnect;
+    //     $this->connect();
+    // }
+    function __construct($dbhost, $dbuser, $dbpass, $dbname = '', $prefix, $charset='utf8', $pconnect=0) {
         $this->dbhost = $dbhost;
         $this->dbuser = $dbuser;
         $this->dbpass = $dbpass;
@@ -27,7 +35,7 @@ class DbMysql {
         $this->pconnect = $pconnect;
         $this->connect();
     }
-    
+
     // 数据库连接
     function connect() {
         if ($this->pconnect) {
@@ -41,24 +49,24 @@ class DbMysql {
                 return false;
             }
         }
-        
+
         if ($this->version() > '4.1') {
             if ($this->charset) {
                 $this->query("SET character_set_connection=" . $this->charset . ", character_set_results=" . $this->charset .
                          ", character_set_client=binary");
             }
-            
+
             if ($this->version() > '5.0.1') {
                 $this->query("SET sql_mode=''");
             }
         }
-        
+
         if (mysql_select_db($this->dbname, $this->dou_link) === false) {
             $this->error("NO THIS DBNAME:" . $this->dbname);
             return false;
         }
     }
-    
+
     // 数据库执行语句，可执行查询添加修改删除等任何sql语句
     function query($sql) {
         $this->sql = $sql;
@@ -66,37 +74,37 @@ class DbMysql {
         if (empty($query)) return;
         return $query;
     }
-    
+
     // 取得前一次 MySQL 操作所影响的记录行数
     function affected_rows() {
         return mysql_affected_rows();
     }
-    
+
     // 返回结果集中行的数目
     function num_rows($query) {
         return @ mysql_num_rows($query);
     }
-    
+
     // 返回结果集中一个字段的值
     function result($row = 0) {
         return @ mysql_result($this->result, $row);
     }
-    
+
     // 返回结果集中字段的数
     function num_fields($query) {
         return mysql_num_fields($query);
     }
-    
+
     // 释放结果内存
     function free_result() {
         return mysql_free_result($this->result);
     }
-    
+
     // 返回上一步 INSERT 操作产生的 ID
     function insert_id() {
         return mysql_insert_id();
     }
-    
+
     // 获取下一个自增(id)值
     function auto_id($table) {
         return $this->get_one("SELECT auto_increment FROM information_schema.`TABLES` WHERE  TABLE_SCHEMA='" . $this->dbname . "' AND TABLE_NAME = '" . trim($this->table($table), '`') . '\'');
@@ -108,23 +116,23 @@ class DbMysql {
         $row = $this->fetch_array($result,$result_type);
         return $row;
     }
-    
+
     // 从结果集中取得一行作为数字数组
     function fetch_row($query) {
         return mysql_fetch_row($query);
     }
-    
+
     // 从结果集中取得一行作为关联数组
     function fetch_assoc($query) {
         if (empty($query)) return;
         return mysql_fetch_assoc($query);
     }
-    
+
     // 从结果集取得的行生成的数组
     function fetch_array($query,$result_type=MYSQL_BOTH) {
         return mysql_fetch_array($query,$result_type);
     }
-    
+
     // 返回 MySQL 服务器的信息
     function version() {
         if (empty($this->version)) {
@@ -132,28 +140,28 @@ class DbMysql {
         }
         return $this->version;
     }
-    
+
     // 关闭 MySQL 连接
     function close() {
         return mysql_close($this->dou_link);
     }
-    
+
     // 将指定的表名加上前缀后返回
     function table($str) {
         return '`' . $this->prefix . $str . '`';
     }
-    
+
     // 查询全部
     function select_all($table) {
         return $this->query("SELECT * FROM " . $table);
     }
-    
+
     // 判断表是否存在
     function table_exist($table) {
         if($this->num_rows($this->query("SHOW TABLES LIKE '" . trim($this->table($table), '`') .'\'')) == 1)
             return true;
     }
-    
+
     // 判断字段是否存在
     function field_exist($table, $field) {
         $sql = "SHOW COLUMNS FROM " . $this->table($table);
@@ -164,7 +172,7 @@ class DbMysql {
         if (in_array($field, $array))
             return true;
     }
-    
+
     // 验证信息是否已经存在
     function value_exist($table, $field, $value, $where = '') {
         $sql = "SELECT $field FROM " . $this->table($table) . " WHERE $field = '$value'" . $where;
@@ -211,7 +219,7 @@ class DbMysql {
         // $this->close();
         return $affected_rows;
     }
-    
+
     // 删除数据
     function delete($table, $condition, $url = '') {
         if ($this->query("DELETE FROM $table WHERE $condition")) {
@@ -220,7 +228,7 @@ class DbMysql {
             }
         }
     }
-    
+
     // 条件查询 mysql_query()
     function select($table, $column = "*", $condition = '', $debug = '') {
         $condition = $condition ? ' Where ' . $condition : NULL;
@@ -276,7 +284,7 @@ class DbMysql {
         }
         return $rows;
     }
-    
+
     // 循环读取结果集并储存至数组
     function fetch_array_all($table, $order='', $where='', $fields='*') {
         $where = $where ? " WHERE ".$where : '';
@@ -299,7 +307,7 @@ class DbMysql {
         $result = $this->query($sql);
         return $this->num_rows($result);
     }
-    
+
     // 转义特殊字符
     function escape_string($string) {
         if (PHP_VERSION >= '4.3') {
@@ -308,13 +316,13 @@ class DbMysql {
             return mysql_escape_string($string);
         }
     }
-    
+
     // 返回错误信息
     function error($msg = '') {
         $msg = $msg ? "This Error: $msg" : '<b>MySQL server error report</b><br>' . $this->error_msg;
         exit($msg);
     }
-    
+
     // 数据库导入
     function fn_execute($sql) {
         $sqls = $this->fn_split($sql);
@@ -328,12 +336,12 @@ class DbMysql {
         }
         return true;
     }
- 
+
     // 数据分离
     function fn_split($sql) {
         if ($this->version() > '4.1' && $this->sqlcharset)
             $sql = preg_replace("/TYPE=(InnoDB|MyISAM)( DEFAULT CHARSET=[^; ]+)?/", "TYPE=\\1 DEFAULT CHARSET=" . $this->sqlcharset, $sql);
-        
+
         $sql = str_replace("\r", "\n", $sql);
         $ret = array();
         $num = 0;

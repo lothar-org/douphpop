@@ -1,13 +1,10 @@
 <?php
-
-if (!defined('IN_LOTHAR')) {
-    die('Hacking attempt');
-}
+if (!defined('IN_LOTHAR')) die('Hacking attempt');
 
 // 初始化
 $module = $check->is_letter($_REQUEST['module']) ? $_REQUEST['module'] : 'product';
 switch ($module) {
-    case 'article' : 
+    case 'article' :
         $name_field = 'title';
         $smarty->assign('keyword_article', $keyword);
         $search_url = '?module=article&s=';
@@ -30,19 +27,19 @@ $limit = $dou->pager($module, ($_DISPLAY[$module] ? $_DISPLAY[$module] : 10), $p
 $sql = "SELECT * FROM " . $dou->table($module) . $where . " ORDER BY id DESC" . $limit;
 $query = $dou->query($sql);
 
-while ($row = $dou->fetch_array($query)) {
+while ($row = $dou->fetch_assoc($query)) {
     $cat_name = $dou->get_one("SELECT cat_name FROM " . $dou->table($module .'_category') . " WHERE cat_id = '$row[cat_id]'");
     $url = $dou->rewrite_url($module, $row['id']);
     $add_time = date("Y-m-d", $row['add_time']);
     $add_time_short = date("m-d", $row['add_time']);
-    
+
     $description = $row['description'] ? $row['description'] : $dou->dou_substr($row['content'], 150);
-    
+
     // 生成缩略图的文件名
     $image = explode('.', $row['image']);
     $thumb = ROOT_URL . $image[0] . '_thumb.' . $image[1];
     $price = $row['price'] > 0 ? $dou->price_format($row['price']) : $_LANG['price_discuss'];
-    
+
     $search_list[] = array(
             "id" => $row['id'],
             "cat_id" => $row['cat_id'],
@@ -55,7 +52,7 @@ while ($row = $dou->fetch_array($query)) {
             "add_time_short" => $add_time_short,
             "click" => $row['click'],
             "description" => $description,
-            "url" => $url 
+            "url" => $url
     );
 }
 

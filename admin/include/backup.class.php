@@ -1,14 +1,18 @@
 <?php
+if (!defined('IN_LOTHAR')) die('Hacking attempt');
 
-if (!defined('IN_LOTHAR')) {
-    die('Hacking attempt');
-}
 class Backup {
     var $sqlcharset;
-    function Backup($sqlcharset) {
+
+    /**
+     * +----------------------------------------------------------
+     * 构造函数
+     * +----------------------------------------------------------
+    */
+    function __construct($sqlcharset) {
         $this->sqlcharset = $sqlcharset;
     }
-    
+
     /**
      * +----------------------------------------------------------
      * 生成数据库备份文件
@@ -19,16 +23,16 @@ class Backup {
      */
     function sql_dumptable($table, $vol_size, $startfrom = 0, $currsize = 0) {
         global $startrow;
-        
+
         $allow_max_size = intval(@ ini_get('upload_max_filesize')); // 单位M
         if ($allow_max_size > 0 && $vol_size > ($allow_max_size * 1024)) {
             $vol_size = $allow_max_size * 1024; // 单位K
         }
-        
+
         if ($vol_size > 0) {
             $vol_size = $vol_size * 1024;
         }
-        
+
         if (!isset($tabledump)) {
             $tabledump = '';
         }
@@ -64,7 +68,7 @@ class Backup {
         $tabledump .= "\n";
         return $tabledump;
     }
-    
+
     /**
      * 获取文件扩展名
      */

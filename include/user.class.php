@@ -18,7 +18,7 @@ class DouUser {
             return false;
         }
     }
-    
+
     /**
      * +----------------------------------------------------------
      * 用户状态
@@ -35,7 +35,7 @@ class DouUser {
         // 如果比对$shell吻合，则返回会员信息，否则返回空
         return $check_shell ? $user : false;
     }
-    
+
     /**
      * +----------------------------------------------------------
      * 登录超时默认为3小时(10800秒)
@@ -52,7 +52,7 @@ class DouUser {
             $_SESSION[DOU_ID]['ontime'] = time();
         }
     }
-    
+
     /**
      * +----------------------------------------------------------
      * 获取会员信息
@@ -72,7 +72,7 @@ class DouUser {
         // $uinfo['last_ip'] = $GLOBALS['dou']->get_first_log($uinfo['last_ip']);
         return $uinfo;
     }
-    
+
     /**
      * +----------------------------------------------------------
      * 初始化会员功能全局变量
@@ -120,12 +120,12 @@ class DouUser {
             $row['status_format'] = $GLOBALS['_LANG']['order_status_' . $row['status']];
             $row['order_amount_format'] = $GLOBALS['dou']->price_format($row['order_amount']);
             $row['product_list'] = $GLOBALS['dou_order']->get_order_product($row['order_id']);
-            
+
             $order_list[] = $row;
         }
         return $order_list;
     }
-    
+
     /**
      * +----------------------------------------------------------
      * 找回密码验证
@@ -138,12 +138,12 @@ class DouUser {
     function check_password_reset($user_id, $code, $timeout = 86400) {
         if ($GLOBALS['dou']->value_exist('user', 'user_id', $user_id)) {
             $user = $GLOBALS['dou']->fetch_array($GLOBALS['dou']->select($GLOBALS['dou']->table('user'), '*', "user_id = '$user_id'"));
-            
+
             // 初始化
             $get_code = substr($code , 0 , 16);
             $get_time = substr($code , 16 , 26);
             $code = substr(md5($user['email'] . $user['password'] . $get_time . $user['last_login'] . DOU_SHELL) , 0 , 16);
-            
+
             // 验证链接有效性
             if (time() - $get_time < $timeout && $code == $get_code) return true;
         }

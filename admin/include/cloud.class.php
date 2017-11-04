@@ -6,13 +6,13 @@ if (!defined('IN_LOTHAR')) {
 class Cloud {
     private $cache_dir; // 模块包所在目录
     private $root_dir; // 站点根目录目录
-    
+
     /**
      * +----------------------------------------------------------
      * 构造函数
      * +----------------------------------------------------------
-     */
-    function Cloud($cache_dir) {
+    */
+    function __construct($cache_dir) {
         $this->cache_dir = ROOT_PATH . $cache_dir . '/';
         $this->root_dir = ROOT_PATH;
     }
@@ -53,7 +53,7 @@ class Cloud {
             } else {
                 $down_url = 'http://cloud.Lothar.com/extend/down/' . $cloud_id . '.html';
             }
-            
+
             $this->dou_flush($GLOBALS['_LANG']['cloud_down_ing_0'] . $down_url . $GLOBALS['_LANG']['cloud_down_ing_1']);
             if ($this->file_download($down_url, $this->cache_dir)) {
                $this->dou_flush($GLOBALS['_LANG']['cloud_unzip_ing']);
@@ -62,7 +62,7 @@ class Cloud {
                exit;
             }
         }
-        
+
         // STEP3 解压缩
         if ($this->file_unzip($item_zip, $item_dir)) {
             if ($type == 'module') $this->modify_theme_dir($item_dir); // 将解压得到的扩展目录中的模板文件夹名改成当前启用的模板文件夹名
@@ -73,7 +73,7 @@ class Cloud {
             $this->dou_flush($GLOBALS['_LANG']['cloud_unzip_wrong']);
             exit;
         }
-        
+
         // STEP4 安装模块
         if ($wrong = $this->install($type, $cloud_id, $mode)) {
             $this->dou_flush($wrong);
@@ -82,12 +82,12 @@ class Cloud {
             $text = $mode == 'update' ? $GLOBALS['_LANG']['cloud_update_0'] : $GLOBALS['_LANG']['cloud_install_0'];
             $success[] = $text . $cloud_id . $GLOBALS['_LANG']['cloud_install_1'];
             $success[] = $this->msg_success($type, $cloud_id);
-            
+
             $this->dou_flush($success);
         }
-        
+
         $GLOBALS['dou']->create_admin_log($GLOBALS['_LANG']['cloud_handle_success'] . $GLOBALS['_LANG']['cloud_' . $type] . ': ' . $cloud_id);
-        
+
         // 操作完成补足页面HTML代码
         echo '</div></div></div><div class="clear"></div><div id="dcFooter"><div id="footer"><div class="line"></div><ul>' . $GLOBALS['_LANG']['footer_copyright'] . '</ul></div></div><div class="clear"></div></div></body></html>';
     }
@@ -109,7 +109,7 @@ class Cloud {
         $item_dir = $this->cache_dir . $cloud_id; // 模块目录
         $sql_install = $this->root_dir . "data/backup/$cloud_id.sql"; // 安装用的SQL文件
         $sql_update = $this->root_dir . "data/backup/$cloud_id" . "_update.sql"; // 升级用的SQL文件
-        
+
         // STEP1 拷贝模块文件
         if ($type == 'theme') {
             $this->dir_action($item_dir, $this->root_dir . 'theme/' . $cloud_id);
@@ -120,7 +120,7 @@ class Cloud {
         } else {
             $this->dir_action($item_dir, $this->root_dir);
         }
-        
+
         // STEP2 数据库操作
         if ($type == 'module') {
             $sql_file = $mode == 'update' ? $sql_update : $sql_install; // 判断是安装还是升级
@@ -131,12 +131,12 @@ class Cloud {
                     if ($mode != 'update') { // 升级时不判断模块类型
                         // 根据SQL文件中是否包含'_category'来区分是栏目模块还是简单模块
                         $module_type = strpos($sql, $cloud_id . '_category') === false ? 'single_module' : 'column_module';
-                        
+
                         // 根据SQL中的操作指令来生成操作选项
                         if (strpos($sql, 'CREATE-CONFIG-DISPLAY') !== false) $operate[] = 'CREATE-CONFIG-DISPLAY';
                         if (strpos($sql, 'CREATE-CONFIG-HOME-DISPLAY') !== false) $operate[] = 'CREATE-CONFIG-HOME-DISPLAY';
                         if (strpos($sql, 'CREATE-CONFIG-DEFINED') !== false) $operate[] = 'CREATE-CONFIG-DEFINED';
-                        
+
                         // 加入显示设置项和自定义设置项
                         if ($operate) $this->change_system_config($cloud_id, $operate);
                     }
@@ -146,7 +146,7 @@ class Cloud {
             } elseif ($cloud_id == 'mobile') {
                 $module_type = 'single_module';
             }
-            
+
             // STEP3 将模块写入系统文件
             if ($module_type) { // 如果不存在模块类型，则不写入系统文件
                 if (!$this->change_system_dou($cloud_id, $module_type))
@@ -158,13 +158,13 @@ class Cloud {
                 $GLOBALS['dou']->del_dir($action_dir);
             }
         }
-        
+
         // STEP4 无论安装成功与否都将删除安装文件
         @unlink($item_zip);
         $GLOBALS['dou']->del_dir($item_dir);
         @unlink($sql_install);
         @unlink($sql_update);
-            
+
         if ($wrong) {
             $this->clear_module($cloud_id); // 如果安装过程出错，则回滚安装步骤
             return $wrong;
@@ -173,7 +173,7 @@ class Cloud {
                 $this->change_updatedate($type, $cloud_id, false, $mode); // 写入更新日期
         }
     }
-    
+
     /**
      * +----------------------------------------------------------
      * 模块安装验证
@@ -199,10 +199,10 @@ class Cloud {
             if (file_exists($this->root_dir . M_PATH . '/theme/' . $cloud_id))
                 $wrong[] = $GLOBALS['_LANG']['cloud_'.$type] . $GLOBALS['_LANG']['cloud_install_repeat'];
         }
-        
+
         return $wrong;
     }
-    
+
     /**
      * +----------------------------------------------------------
      * 修改系统文件
@@ -215,13 +215,13 @@ class Cloud {
     function change_system_dou($cloud_id, $type = '', $del = false) {
         // 读取模块列表
         $module = $GLOBALS['_MODULE'];
-        
+
         if ($del) { // 删除模块
             // 栏目模块
             foreach ((array)$module['column'] as $key=>$value) {
                 if ($value == $cloud_id) unset($module['column'][$key]);
             }
-            
+
             // 简单模块
             foreach ((array)$module['single'] as $key=>$value) {
                 if ($value == $cloud_id) unset($module['single'][$key]);
@@ -233,11 +233,11 @@ class Cloud {
                 $module['single'][] = $cloud_id;
             }
         }
-        
+
         // 删减后的新模块配置信息
         $new_column = "column_module:" . implode(',',$module['column']);
         $new_single = "single_module:" . implode(',',$module['single']);
-        
+
         // 修改系统文件
         $system_file = $this->root_dir . 'data/system.dou';
         foreach (@file($system_file) as $line) {
@@ -250,12 +250,12 @@ class Cloud {
                 $new_content .= $line . "\r\n";
             }
         }
-        
+
         // 将系统文件内容写入
         if (file_put_contents($system_file, $new_content))
             return true;
     }
-    
+
     /**
      * +----------------------------------------------------------
      * 为栏目模块加入显示设置项和自定义设置项
@@ -269,7 +269,7 @@ class Cloud {
         $display = unserialize($GLOBALS['_CFG']['display']);
         $defined = unserialize($GLOBALS['_CFG']['defined']);
         $mobile_display = unserialize($GLOBALS['_CFG']['mobile_display']);
-        
+
         // 删减操作
         if ($operate == 'DELL') {
             unset($display[$cloud_id], $display['home_' . $cloud_id], $mobile_display[$cloud_id], $mobile_display['home_' . $cloud_id], $defined[$cloud_id]);
@@ -286,13 +286,13 @@ class Cloud {
                 $defined[$cloud_id] = '';
             }
         }
-        
+
         // 重新写入显示设置项和自定义设置项
         $GLOBALS['dou']->query("UPDATE " . $GLOBALS['dou']->table('config') . " SET value = '" . serialize($defined) . "' WHERE name = 'defined'");
         $GLOBALS['dou']->query("UPDATE " . $GLOBALS['dou']->table('config') . " SET value = '" . serialize($display) . "' WHERE name = 'display'");
         $GLOBALS['dou']->query("UPDATE " . $GLOBALS['dou']->table('config') . " SET value = '" . serialize($mobile_display) . "' WHERE name = 'mobile_display'");
     }
-    
+
     /**
      * +----------------------------------------------------------
      * 写入更新日期
@@ -307,7 +307,7 @@ class Cloud {
         // 读取更新时间（不使用$_CFG是因为$_CFG后如果操作了数据库不能获取操作数据库后的最新数据）
         $update_date = $GLOBALS['dou']->get_one("SELECT value FROM " . $GLOBALS['dou']->table('config') . " WHERE name = 'update_date'");
         $update_date = unserialize($update_date);
-        
+
         // 删减操作
         if ($del) {
             unset($update_date[$type][$cloud_id]);
@@ -319,12 +319,12 @@ class Cloud {
                 $update_date[$type][$cloud_id] = date("Ymd", time());
             }
         }
-        
+
         // 重新写入更新时间
         $new_update_date = serialize($update_date);
         $GLOBALS['dou']->query("UPDATE " . $GLOBALS['dou']->table('config') . " SET value = '$new_update_date' WHERE name = 'update_date'");
     }
-    
+
     /**
      * +----------------------------------------------------------
      * 清理模块至未安装的状态
@@ -336,14 +336,14 @@ class Cloud {
         // STEP1 删除模块数据表
         $this->del_module_table($cloud_id);
         $this->change_system_config($cloud_id, true);
-        
+
         // STEP2 删除模块文件
         $this->dir_action($this->cache_dir . $cloud_id, $this->root_dir, true); // true代表删除模式
 
         // STEP3 修改系统文件-删除操作
         $this->change_system_dou($cloud_id, '', true);
     }
-    
+
     /**
      * +----------------------------------------------------------
      * 删除模块数据库
@@ -353,7 +353,7 @@ class Cloud {
      */
     function del_module_table($cloud_id) {
         global $prefix;
-        
+
         // 读取数据库文件
         $sql_file = $this->cache_dir . "$cloud_id/data/backup/$cloud_id.sql";
         if (file_exists($sql_file)) {
@@ -364,11 +364,11 @@ class Cloud {
                     if (!$GLOBALS['dou']->query($line)) return false;
                 }
             }
-            
+
             return true;
         }
     }
-    
+
     /**
      * +----------------------------------------------------------
      * 将解压得到的扩展目录中的模板文件夹名改成当前启用的模板文件夹名
@@ -386,7 +386,7 @@ class Cloud {
         if (ADMIN_PATH != 'admin')
             @rename($item_dir . '/admin', $item_dir . '/' . ADMIN_PATH);
     }
-    
+
     /**
      * +----------------------------------------------------------
      * 目录下文件删除或复制
@@ -416,7 +416,7 @@ class Cloud {
             closedir($dir);
         }
     }
-    
+
     /**
      * +----------------------------------------------------------
      * 解压缩文件
@@ -432,7 +432,7 @@ class Cloud {
             return true;
         }
     }
-    
+
     /**
      * +----------------------------------------------------------
      * 下载文件
@@ -446,15 +446,15 @@ class Cloud {
         $file_name = strpos($basename, '.html') ? str_replace('.html', '.zip' ,$basename) : $basename;
         $save_file = $save_path . $file_name;
         $file_url = str_replace(' ', '%20', $file_url);
-        
+
         $cloud_account = unserialize($GLOBALS['_CFG']['cloud_account']);
-    
+
         if(function_exists('curl_init')) {
             $ch = curl_init();
-            $data = array('user' => $cloud_account['user'], 'password' => $cloud_account['password'], 'url' => ROOT_URL);  
-            curl_setopt($ch, CURLOPT_URL, $file_url);  
-            curl_setopt($ch, CURLOPT_POST, 1);  
-            curl_setopt($ch, CURLOPT_POSTFIELDS, $data);  
+            $data = array('user' => $cloud_account['user'], 'password' => $cloud_account['password'], 'url' => ROOT_URL);
+            curl_setopt($ch, CURLOPT_URL, $file_url);
+            curl_setopt($ch, CURLOPT_POST, 1);
+            curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
             curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
             $temp = curl_exec($ch);
             if(@file_put_contents($save_file, $temp) && !curl_error($ch) && !preg_match("/404 Not Found/", $temp)) {
@@ -486,7 +486,7 @@ class Cloud {
         ob_flush();
         flush();
     }
-    
+
     /**
      * +----------------------------------------------------------
      * 生成安装成功后提示连接
@@ -498,7 +498,7 @@ class Cloud {
         switch ($type) {
             case 'plugin':
               $msg = '<a href="plugin.php?rec=enable&unique_id=' . $cloud_id . '" class="btnGray">' . $GLOBALS['_LANG']['cloud_plugin_enable'] . '</a> <a href="plugin.php" class="btnGray">' . $GLOBALS['_LANG']['cloud_plugin_home'] . '</a>';
-              break;  
+              break;
             case 'theme':
               $msg = '<a href="theme.php?rec=enable&unique_id=' . $cloud_id . '" class="btnGray">' . $GLOBALS['_LANG']['cloud_theme_enable'] . '</a> <a href="theme.php" class="btnGray">' . $GLOBALS['_LANG']['cloud_theme_home'] . '</a>';
               break;

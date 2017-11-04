@@ -1,5 +1,4 @@
 <?php
-
 define('ROUTE', true);
 
 // 获取伪静态后的URL
@@ -36,13 +35,13 @@ function seo_url($route) {
     $parts = explode('/', $route);
     $parts[1] = isset($parts[1]) ? $parts[1] : '';
     $parts[2] = isset($parts[2]) ? $parts[2] : '';
-    
+
     // URL中news对应的是article模块
     $parts[0] = $parts[0] == 'news' ? 'article' : $parts[0];
-    
+
     // 获取模块信息
     $module = module();
-    
+
     if (preg_match("/^([a-z0-9-]+)\.html$/", $parts[0])) { // 单页面URL格式化
         $mark['module'] = 'page';
         $mark['unique_id'] = str_replace('.html', '', $parts[0]);
@@ -72,7 +71,7 @@ function seo_url($route) {
                 $mark['page'] = str_replace('o', '', $parts[2]);
         }
     }
-    
+
     return $mark;
 }
 
@@ -92,10 +91,10 @@ function module() {
             $setting[$arr[0]] = explode(',', $arr[1]);
         }
     }
-    
+
     $module['column'] = $setting['column_module'];
     $module['single'] = $setting['single_module'];
-    
+
     return $module;
 }
 ?>
