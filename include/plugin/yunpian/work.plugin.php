@@ -10,7 +10,7 @@ class Plugin {
      * $mobile 对象手机号
      * +----------------------------------------------------------
      */
-    function Plugin($mobile='') {
+    function __construct($mobile='') {
         $this->mobile = trim($mobile);
         $this->config = $this->p_config();
     }

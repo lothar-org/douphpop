@@ -11,9 +11,7 @@
  * Author: Lothar
  * Release Date: 2015-06-10
  */
-if (!defined('IN_LOTHAR')) {
-    die('Hacking attempt');
-}
+if (!defined('IN_LOTHAR')) die('Hacking attempt');
 
 /* 插件唯一ID
 ----------------------------------------------------------------------------- */

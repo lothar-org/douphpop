@@ -11,9 +11,8 @@
  * Author: Lothar
  * Release Date: 2015-06-10
  */
-if (!defined('IN_LOTHAR')) {
-    die('Hacking attempt');
-}
+if (!defined('IN_LOTHAR')) die('Hacking attempt');
+
 class Plugin {
     var $plugin_id = 'express'; // 插件唯一ID
 

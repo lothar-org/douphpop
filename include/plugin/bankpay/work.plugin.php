@@ -11,9 +11,8 @@
  * Author: Lothar
  * Release Date: 2015-06-10
  */
-if (!defined('IN_LOTHAR')) {
-    die('Hacking attempt');
-}
+if (!defined('IN_LOTHAR')) die('Hacking attempt');
+
 class Plugin {
     var $plugin_id = 'bankpay'; // 插件唯一ID
 
@@ -24,7 +23,7 @@ class Plugin {
      * $order_amount 订单金额
      * +----------------------------------------------------------
      */
-    function Plugin($order_sn = '', $order_amount = '') {
+    function __construct($order_sn = '', $order_amount = '') {
         $this->order_sn = $order_sn;
         $this->order_amount = $order_amount;
     }

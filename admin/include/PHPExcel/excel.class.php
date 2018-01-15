@@ -34,21 +34,22 @@ class Excel {
         // $objActSheet->getColumnDimension('C')->setAutoSize(30);
         // $objActSheet->getColumnDimension('K')->setAutoSize(true);
 
-        // 表格标题文字
-        $objActSheet->setCellValue('A1', $GLOBALS['_CFG']['site_name'] . '-' . $GLOBALS['_LANG'][$module . '_list']);
-        $objActSheet->mergeCells('A1:K1'); // 表格标题文字显示区域
+        // 设置表格标题文字
+        $title = $data['title'] ? $data['title'] : $GLOBALS['_CFG']['site_name'] . '-' . $GLOBALS['_LANG'][$module . '_list'];
+        $objActSheet->setCellValue('A1', $title);
+        $objActSheet->mergeCells('A1:' . $this->n_to_l(count($data['head'])-1).'1'); // 合并单元格，表格标题文字显示区域
 
         // 设置表格标题栏内容
         foreach ((array)$data['head'] as $key => $value) {
-            $objActSheet->getColumnDimension($this->number_to_letter($key))->setAutoSize(true);
-            // $objActSheet->getColumnDimension($this->number_to_letter($key))->setWidth(strlen($value));// 无法统计最长的
-            $objActSheet->setCellValue($this->number_to_letter($key) .'2', $value);
+            $objActSheet->getColumnDimension($this->n_to_l($key))->setAutoSize(true);
+            // $objActSheet->getColumnDimension($this->n_to_l($key))->setWidth(strlen($value));// 无法统计最长的
+            $objActSheet->setCellValue($this->n_to_l($key) .'2', $value);
         }
 
         // 生成列表
         foreach ((array)$data['list'] as $row_number => $row) {
             foreach ((array)$row as $key => $value) {
-                $objActSheet->setCellValue($this->number_to_letter($key) . ($row_number+3), $value);
+                $objActSheet->setCellValue($this->n_to_l($key) . ($row_number+3), $value);
             }
         }
 
@@ -71,6 +72,13 @@ class Excel {
         $objWriter->save ( 'php://output');
 
         @unlink(ROOT_PATH . 'cache/' . $outputFileName);
+
+        // header('pragma:public');
+        // header('Content-type:application/vnd.ms-excel;charset=utf-8;name="'.$xlsTitle.'.xls"');
+        // header("Content-Disposition:attachment;filename=$fileName.xls");//attachment新窗口打印inline本窗口打印
+        // $objWriter = \PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel5');//Excel5为xls格式，excel2007为xlsx格式
+        // $objWriter->save('php://output');
+        // exit;
     }
 
     /**
@@ -78,7 +86,7 @@ class Excel {
      * 导出会员资料
      * +----------------------------------------------------------
      */
-    function number_to_letter($number) {
+    function n_to_l($number) {
         $letter = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
         $box = str_split($letter);
         return $box[$number];

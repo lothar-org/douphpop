@@ -11,9 +11,8 @@
  * Author: Lothar
  * Release Date: 2015-06-10
  */
-if (!defined('IN_LOTHAR')) {
-    die('Hacking attempt');
-}
+if (!defined('IN_LOTHAR')) die('Hacking attempt');
+
 class Plugin {
     var $plugin_id = 'alipaywap'; // 插件唯一ID
 
@@ -25,7 +24,7 @@ class Plugin {
      * $root_url 站点跟网址
      * +----------------------------------------------------------
      */
-    function Plugin($order_sn = '', $order_amount = '', $root_url = ROOT_URL) {
+    function __construct($order_sn = '', $order_amount = '', $root_url = ROOT_URL) {
         $this->order_sn = $order_sn;
         $this->order_amount = $order_amount;
         $this->root_url = $root_url;

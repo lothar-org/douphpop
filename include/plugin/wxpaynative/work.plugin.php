@@ -15,7 +15,7 @@ class Plugin {
      * $order_amount 订单金额
      * +----------------------------------------------------------
      */
-    function Plugin($order_sn = '', $order_amount = '') {
+    function __construct($order_sn = '', $order_amount = '') {
         $this->order_sn = $order_sn;
         $this->order_amount = intval(ceil($order_amount*100));
     }

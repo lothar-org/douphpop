@@ -18,7 +18,9 @@ require_once 'log.php';
  * 6、在支付成功通知中需要查单确认是否真正支付成功（见：notify.php）
  */
 $notify = new NativePay();
-// $url1 = $notify->GetPrePayUrl("123456789");
+$url1 = $notify->GetPrePayUrl("123456789");
+
+
 
 //模式二
 /**
@@ -28,9 +30,6 @@ $notify = new NativePay();
  * 3、支付完成之后，微信服务器会通知支付成功
  * 4、在支付成功通知中需要查单确认是否真正支付成功（见：notify.php）
  */
-
-
-
 // echo $title = trim($_POST['title']);
 $title = trim(" Product Details ");
 // echo $title = iconv('utf-8', 'gb2312', $title);
@@ -41,7 +40,6 @@ if (intval($_POST['price_count'])) {
 } else {
     $price_count = 1;
 }
-
 
 $input = new WxPayUnifiedOrder();
 $input->SetBody("$title");
@@ -57,31 +55,6 @@ $input->SetProduct_id("$orders_id");
 // var_dump($input);die();
 $result = $notify->GetPayUrl($input);
 $url2 = $result["code_url"];
-
-
-
-
-/*
-$input = new WxPayUnifiedOrder();
-$input->SetBody("details");//商品描述    编码问题,不能为中文
-$input->SetAttach("add");// 附加数据 编码问题,不能为中文  非必填
-$input->SetOut_trade_no(WxPayConfig::MCHID.date("YmdHis"));//商户订单号   编码问题,只能是字母、数字
-$input->SetTotal_fee("2");//总金额 单位：分。不能为小数
-$input->SetTime_start(date("YmdHis"));//交易起始时间   非必填
-$input->SetTime_expire(date("YmdHis", time() + 600));//交易结束时间    非必填
-$input->SetGoods_tag("mark");//商品标记  编码问题,不能为中文
-$input->SetNotify_url("http://paysdk.weixin.qq.com/example/notify.php");//通知地址 
-    SetNotify_url 的地址需要是公网可以访问的到的地址，且必须是完整的地址，包括协议
-    填127.0.0.1是不行的，在回掉页面用
-    $data = file_get_contents("php://input"); 
-    var_dump($data);
-    var_dump($_REQUEST);exit();
-    来输出获取的数据
-$input->SetTrade_type("NATIVE");//交易类型   原生NATIVE
-$input->SetProduct_id("123456789");//商品ID    编码问题,不能为中文
-$result = $notify->GetPayUrl($input);//转二维码
-$url2 = $result["code_url"];//二维码
-*/
 ?>
 
 <html>
